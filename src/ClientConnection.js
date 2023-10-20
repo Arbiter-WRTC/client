@@ -1,5 +1,4 @@
 const RTC_CONFIG = null;
-
 class ClientConnection {
   constructor(socket, id) {
     this.id = id;
@@ -9,6 +8,10 @@ class ClientConnection {
     this.requestUserMedia();
     this.mediaStream = new MediaStream();
     this.mediaTracks = {};
+  }
+
+  getMediaStream() {
+    return this.mediaStream;
   }
 
   connect() {
@@ -22,11 +25,13 @@ class ClientConnection {
   }
 
   async requestUserMedia() {
+    console.log('requesting user media');
     this.mediaStream = new MediaStream();
     this.media = await navigator.mediaDevices.getUserMedia({
       audio: true,
       video: true,
     });
+    console.log(this.media);
     this.mediaTracks.video = this.media.getVideoTracks()[0];
     this.mediaStream.addTrack(this.mediaTracks.video);
     this.addStreamingMedia.bind(this);
@@ -57,7 +62,6 @@ class ClientConnection {
   async handleProducerHandshake({ description, candidate }) {
     // console.log(data);
     console.log('Got a description or candidate');
-    console.log(description, candidate);
     if (description) {
       console.log('Got a description, setting');
       await this.serverConnection.setRemoteDescription(description);
