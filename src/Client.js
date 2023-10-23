@@ -1,17 +1,10 @@
-const RTC_CONFIG =  {
-  iceServers: [
-    {urls: 'stun:coturn.noop.live:3478'},
-    {urls: 'turn:coturn.noop.live:3478',
-    username: 'testingonly',
-    credential: 'topsecret'}
-  ]
-};
+const RTC_CONFIG =  null;
 
 class Consumer {
   constructor(socket, remotePeerId, clientId) {
     this.clientId = clientId;
     this.remotePeerId = remotePeerId;
-    this.connection = new RTCPeerConnection(RTC_CONFIG);
+    this.connection = new RTCPeerConnection(null);
     this.registerConnectionCallbacks();
     this.socket = socket;
     this.isNegotiating = false;
