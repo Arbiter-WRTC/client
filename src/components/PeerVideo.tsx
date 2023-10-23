@@ -16,7 +16,7 @@ const PeerVideo = (props: PeerVideoProps) => {
     }
   }, [srcObject]);
 
-  return <video ref={videoRef} id="self" autoPlay muted playsInline></video>;
+  return <video ref={videoRef} id={props.id} className='video' autoPlay playsInline></video>;
 };
 
 export default PeerVideo;

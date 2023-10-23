@@ -14,7 +14,7 @@ const SelfVideo = (props: SelfVideoProps) => {
     }
   }, [srcObject]);
 
-  return <video ref={videoRef} id="self" autoPlay muted playsInline></video>;
+  return <video ref={videoRef} id="self" className='video' autoPlay muted playsInline></video>;
 };
 
 export default SelfVideo;

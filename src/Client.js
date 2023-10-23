@@ -1,4 +1,11 @@
-const RTC_CONFIG = null;
+const RTC_CONFIG =  {
+  iceServers: [
+    {urls: 'stun:coturn.noop.live:3478'},
+    {urls: 'turn:coturn.noop.live:3478',
+    username: 'testingonly',
+    credential: 'topsecret'}
+  ]
+};
 
 class Consumer {
   constructor(socket, remotePeerId, clientId) {
@@ -33,7 +40,7 @@ class Consumer {
       // );
       this.socket.emit('consumerHandshake', {
         candidate,
-        clientId: this.id,
+        clientId: this.clientId,
         remotePeerId: this.remotePeerId,
       });
     }
@@ -69,6 +76,8 @@ class Consumer {
         console.log(
           `Sending ${this.connection.localDescription.type} to ${this.remotePeerId}`
         );
+        console.log('attempting to handshake', this.id, this.remotePeerId)
+
         this.socket.emit('consumerHandshake', {
           description: this.connection.localDescription,
           clientId: this.clientId,
@@ -107,6 +116,7 @@ class Client {
   handleConsumerHandshake({ clientId, remotePeerId, description, candidate }) {
     let consumer = this.consumers.get(remotePeerId);
     if (!consumer) {
+      console.log('new consumer with id', clientId);
       consumer = new Consumer(this.socket, remotePeerId, clientId);
       this.consumers.set(remotePeerId, consumer);
     }

@@ -1,4 +1,11 @@
-const RTC_CONFIG = null;
+const RTC_CONFIG =  {
+  iceServers: [
+    {urls: 'stun:coturn.noop.live:3478'},
+    {urls: 'turn:coturn.noop.live:3478',
+    username: 'testingonly',
+    credential: 'topsecret'}
+  ]
+};
 class ClientConnection {
   constructor(socket, id) {
     this.id = id;
@@ -31,9 +38,10 @@ class ClientConnection {
       audio: true,
       video: true,
     });
-    console.log(this.media);
     this.mediaTracks.video = this.media.getVideoTracks()[0];
+    this.mediaTracks.audio = this.media.getAudioTracks()[0];
     this.mediaStream.addTrack(this.mediaTracks.video);
+    this.mediaStream.addTrack(this.mediaTracks.audio);
     this.addStreamingMedia.bind(this);
   }
 
@@ -43,6 +51,7 @@ class ClientConnection {
     const tracks = this.mediaStream.getTracks();
     if (tracks.length === 0) return;
     this.serverConnection.addTrack(tracks[0]);
+    this.serverConnection.addTrack(tracks[1]);
   }
 
   registerSocketCallbacks() {
