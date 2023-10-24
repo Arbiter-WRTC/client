@@ -6,7 +6,7 @@ Client needs a Type?
 */
 
 import { useEffect, useState } from 'react';
-import Client from './Client';
+import Client from './services/Client';
 import SelfVideo from './components/SelfVideo';
 import PeerVideo from './components/PeerVideo';
 import './App.css';
@@ -24,6 +24,12 @@ function App() {
     setClient(new Client(handleNewConsumer));
     // cleanup to socket server to remove entry from map
   }, []);
+
+ console.log('MODE', import.meta.env.MODE);
+ console.log('BASE_URL', import.meta.env.BASE_URL);
+ console.log('PROD', import.meta.env.PROD);
+ console.log('DEV', import.meta.env.DEV);
+ console.log('SSR', import.meta.env.SSR);
 
   return (
     client &&  ( 
