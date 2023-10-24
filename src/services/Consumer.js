@@ -9,6 +9,7 @@ class Consumer {
     // this.addChatChannel();
     this.mediaTracks = {};
     this.mediaStream = new MediaStream();
+    this.features = {};
   }
 
   getMediaStream() {
@@ -67,7 +68,7 @@ class Consumer {
         console.log(
           `Sending ${this.connection.localDescription.type} to ${this.remotePeerId}`
         );
-        console.log('attempting to handshake', this.id, this.remotePeerId)
+        console.log('attempting to handshake', this.id, this.remotePeerId);
 
         this.socket.emit('consumerHandshake', {
           description: this.connection.localDescription,

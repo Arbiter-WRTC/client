@@ -1,6 +1,5 @@
-
 class Producer {
-  constructor(socket, id, RTC_CONFIG) {
+  constructor(socket, id, RTC_CONFIG, updateFeatures) {
     this.id = id;
     this.serverConnection = new RTCPeerConnection(RTC_CONFIG);
     this.socket = socket;
@@ -9,6 +8,10 @@ class Producer {
     this.mediaStream = new MediaStream();
     this.mediaTracks = {};
     console.log('Producer constructed');
+    this.features = {
+      audio: false,
+    };
+    this.updateFeatures = updateFeatures;
   }
 
   getMediaStream() {
@@ -16,7 +19,7 @@ class Producer {
   }
 
   connect() {
-    console.log('producer.connect')
+    console.log('producer.connect');
     this.socket.open();
   }
 
@@ -24,6 +27,7 @@ class Producer {
     this.registerConnectionCallbacks.call(this);
     this.addChatChannel.call(this);
     this.addStreamingMedia.call(this);
+    this.addCallFeatures.call(this);
   }
 
   async requestUserMedia() {
@@ -35,6 +39,9 @@ class Producer {
     });
     this.mediaTracks.video = this.media.getVideoTracks()[0];
     this.mediaTracks.audio = this.media.getAudioTracks()[0];
+
+    this.mediaTracks.audio.enabled = this.features.audio;
+
     this.mediaStream.addTrack(this.mediaTracks.video);
     this.mediaStream.addTrack(this.mediaTracks.audio);
     this.addStreamingMedia.bind(this);
@@ -127,6 +134,26 @@ class Producer {
     this.serverConnection.chatChannel.onmessage = callback.bind(this);
   }
 
+  addCallFeatures() {
+    this.featuresChannel = this.serverConnection.createDataChannel('features', {
+      negotiated: true,
+      id: 110,
+    });
+
+    this.featuresChannel.onopen = (event) => {
+      console.log('Features channel opened.');
+      this.featuresChannel.send(
+        JSON.stringify({ id: this.id, features: this.features })
+      );
+    };
+
+    this.featuresChannel.onmessage = ({ data }) => {
+      console.log('Got a message:', JSON.parse(data));
+      const { id, features } = JSON.parse(data);
+      this.updateFeatures(id, features);
+    };
+  }
+
   // for dev only; remove later
   sendMessage() {
     console.log(this.serverConnection.chatChannel.readyState);
@@ -135,6 +162,16 @@ class Producer {
         `Hello from the Client: ${this.id}`
       );
     }
+  }
+
+  toggleMic() {
+    const audio = this.mediaTracks.audio;
+    this.features.audio = audio.enabled = !audio.enabled;
+
+    // Share features
+    this.featuresChannel.send(
+      JSON.stringify({ id: this.id, features: this.features })
+    );
   }
 }
 

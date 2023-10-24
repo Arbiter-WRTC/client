@@ -9,10 +9,24 @@ class Client {
   constructor(onUpdateConsumers) {
     this.id = uuidv4();
     this.socket = socket;
-    this.producer = new Producer(this.socket, this.id, RTC_CONFIG);
+    this.producer = new Producer(
+      this.socket,
+      this.id,
+      RTC_CONFIG,
+      this.updateFeatures.bind(this)
+    );
     this.consumers = new Map();
     this.onUpdateConsumers = onUpdateConsumers;
     this.bindSocketEvents();
+  }
+
+  updateFeatures(id, features) {
+    const consumer = this.consumers.get(id);
+    consumer.features = features;
+
+    console.log('Updating features on:', id);
+    console.log(consumer.features);
+    this.onUpdateConsumers(this.consumers);
   }
 
   getProducer() {
@@ -66,6 +80,10 @@ class Client {
 
     consumer.handshake(description, candidate);
     this.onUpdateConsumers(this.consumers);
+  }
+
+  toggleMic() {
+    this.producer.toggleMic();
   }
 }
 
