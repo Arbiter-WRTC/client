@@ -1,7 +1,6 @@
-const RTC_CONFIG =  null;
 
 class Producer {
-  constructor(socket, id) {
+  constructor(socket, id, RTC_CONFIG) {
     this.id = id;
     this.serverConnection = new RTCPeerConnection(RTC_CONFIG);
     this.socket = socket;

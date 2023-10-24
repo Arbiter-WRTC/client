@@ -2,11 +2,14 @@ import { socket } from './socket';
 import { v4 as uuidv4 } from 'uuid';
 import Consumer from './Consumer';
 import Producer from './Producer';
+import { RTC_CONFIG } from '../constants';
+
+// const RTC_CONFIG = import.meta.env.VITE_RTC_CONFIG; 
 class Client {
   constructor(onNewConsumer) {
     this.id = uuidv4();
     this.socket = socket;
-    this.producer = new Producer(this.socket, this.id);
+    this.producer = new Producer(this.socket, this.id, RTC_CONFIG);
     this.consumers = new Map();
     this.onNewConsumer = onNewConsumer;
     this.bindSocketEvents();
@@ -45,7 +48,7 @@ class Client {
   handleConsumerHandshake({ clientId, remotePeerId, description, candidate }) {
     let consumer = this.consumers.get(remotePeerId);
     if (!consumer) {
-      consumer = new Consumer(this.socket, remotePeerId, clientId);
+      consumer = new Consumer(this.socket, remotePeerId, clientId, RTC_CONFIG);
       this.consumers.set(remotePeerId, consumer);
     }
 

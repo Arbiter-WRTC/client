@@ -25,11 +25,19 @@ function App() {
     // cleanup to socket server to remove entry from map
   }, []);
 
- console.log('MODE', import.meta.env.MODE);
- console.log('BASE_URL', import.meta.env.BASE_URL);
- console.log('PROD', import.meta.env.PROD);
- console.log('DEV', import.meta.env.DEV);
- console.log('SSR', import.meta.env.SSR);
+//  console.log('MODE', import.meta.env.MODE);
+//  console.log('BASE_URL', import.meta.env.BASE_URL);
+//  console.log('PROD', import.meta.env.PROD);
+//  console.log('DEV', import.meta.env.DEV);
+//  console.log('SSR', import.meta.env.SSR);
+//  let localSignalServer = import.meta.env.VITE_URL_SIGNAL_SERVER
+//  if (localSignalServer) {
+//    console.log('localSignalServer', localSignalServer) 
+//  } else {
+//   console.log('localSignaserver not foundmv')
+//  }
+//  console.log('VITE_URL_SIGNAL_SERVER', import.meta.env.VITE_URL_SIGNAL_SERVER) 
+// console.log('TEST_URL', import.meta.env.TEST_URL) // undefined
 
   return (
     client &&  ( 

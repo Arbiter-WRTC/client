@@ -1,11 +1,9 @@
-const RTC_CONFIG =  null;
-
 class Consumer {
-  constructor(socket, remotePeerId, clientId) {
+  constructor(socket, remotePeerId, clientId, RTC_CONFIG) {
     this.socket = socket;
     this.remotePeerId = remotePeerId;
     this.clientId = clientId;
-    this.connection = new RTCPeerConnection(null);
+    this.connection = new RTCPeerConnection(RTC_CONFIG);
     this.registerConnectionCallbacks();
     this.isNegotiating = false;
     // this.addChatChannel();
