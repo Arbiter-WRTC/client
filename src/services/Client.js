@@ -4,34 +4,37 @@ import Consumer from './Consumer';
 import Producer from './Producer';
 import { RTC_CONFIG } from '../constants';
 
-// const RTC_CONFIG = import.meta.env.VITE_RTC_CONFIG; 
+// const RTC_CONFIG = import.meta.env.VITE_RTC_CONFIG;
 class Client {
-  constructor(onNewConsumer) {
+  constructor(onUpdateConsumers) {
     this.id = uuidv4();
     this.socket = socket;
     this.producer = new Producer(this.socket, this.id, RTC_CONFIG);
     this.consumers = new Map();
-    this.onNewConsumer = onNewConsumer;
+    this.onUpdateConsumers = onUpdateConsumers;
     this.bindSocketEvents();
   }
 
+  getProducer() {
+    return this.producer;
+  }
 
   // dev only
   connect() {
     this.socket.connect();
-  };
+  }
 
   // dev only?
   disconnect() {
-    console.log('client.diconnect() invoked')
+    console.log('client.diconnect() invoked');
     this.socket.close();
-  };
+  }
 
   // dev only
   sendMessage() {
     this.producer.sendMessage();
   }
-  
+
   bindSocketEvents() {
     this.socket.on(
       'consumerHandshake',
@@ -43,6 +46,15 @@ class Client {
     });
 
     socket.on('disconnect', this.disconnect);
+
+    socket.on('clientDisconnect', (data) => {
+      const { clientId } = data;
+      console.log('Client disconnected:');
+      console.log(this.consumers);
+      console.log(data);
+      this.consumers.delete(clientId);
+      this.onUpdateConsumers(this.consumers);
+    });
   }
 
   handleConsumerHandshake({ clientId, remotePeerId, description, candidate }) {
@@ -53,7 +65,7 @@ class Client {
     }
 
     consumer.handshake(description, candidate);
-    this.onNewConsumer(this.consumers);
+    this.onUpdateConsumers(this.consumers);
   }
 }
 
