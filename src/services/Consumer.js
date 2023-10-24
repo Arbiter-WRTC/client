@@ -1,12 +1,10 @@
-const RTC_CONFIG =  null;
-
 class Consumer {
-  constructor(socket, remotePeerId, clientId) {
-    this.clientId = clientId;
-    this.remotePeerId = remotePeerId;
-    this.connection = new RTCPeerConnection(null);
-    this.registerConnectionCallbacks();
+  constructor(socket, remotePeerId, clientId, RTC_CONFIG) {
     this.socket = socket;
+    this.remotePeerId = remotePeerId;
+    this.clientId = clientId;
+    this.connection = new RTCPeerConnection(RTC_CONFIG);
+    this.registerConnectionCallbacks();
     this.isNegotiating = false;
     // this.addChatChannel();
     this.mediaTracks = {};
@@ -90,33 +88,4 @@ class Consumer {
   }
 }
 
-class Client {
-  constructor(socket, onNewConsumer) {
-    console.log('initializing client');
-    this.socket = socket;
-    this.consumers = new Map();
-    this.onNewConsumer = onNewConsumer;
-    this.bindSocketEvents();
-  }
-
-  bindSocketEvents() {
-    this.socket.on(
-      'consumerHandshake',
-      this.handleConsumerHandshake.bind(this)
-    );
-  }
-
-  handleConsumerHandshake({ clientId, remotePeerId, description, candidate }) {
-    let consumer = this.consumers.get(remotePeerId);
-    if (!consumer) {
-      console.log('new consumer with id', clientId);
-      consumer = new Consumer(this.socket, remotePeerId, clientId);
-      this.consumers.set(remotePeerId, consumer);
-    }
-
-    consumer.handshake(description, candidate);
-    this.onNewConsumer(this.consumers);
-  }
-}
-
-export default Client;
+export default Consumer;

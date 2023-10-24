@@ -1,7 +1,6 @@
-const RTC_CONFIG =  null;
 
-class ClientConnection {
-  constructor(socket, id) {
+class Producer {
+  constructor(socket, id, RTC_CONFIG) {
     this.id = id;
     this.serverConnection = new RTCPeerConnection(RTC_CONFIG);
     this.socket = socket;
@@ -9,6 +8,7 @@ class ClientConnection {
     this.requestUserMedia();
     this.mediaStream = new MediaStream();
     this.mediaTracks = {};
+    console.log('Producer constructed');
   }
 
   getMediaStream() {
@@ -16,6 +16,7 @@ class ClientConnection {
   }
 
   connect() {
+    console.log('producer.connect')
     this.socket.open();
   }
 
@@ -126,6 +127,7 @@ class ClientConnection {
     this.serverConnection.chatChannel.onmessage = callback.bind(this);
   }
 
+  // for dev only; remove later
   sendMessage() {
     console.log(this.serverConnection.chatChannel.readyState);
     if (this.serverConnection.chatChannel.readyState === 'open') {
@@ -136,4 +138,4 @@ class ClientConnection {
   }
 }
 
-export default ClientConnection;
+export default Producer;
