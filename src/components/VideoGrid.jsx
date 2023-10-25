@@ -75,7 +75,7 @@ const VideoGrid = ({ consumers, clientConnection, isMuted }) => {
             isMuted={isMuted}
           />
         </VideoGridItem>
-        {console.log('Consumers:')}
+
         {Array.from(consumers).map(([consumerId, consumer]) => (
           <VideoGridItem key={consumerId}>
             <PeerVideo

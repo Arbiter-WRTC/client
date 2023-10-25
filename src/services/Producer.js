@@ -12,6 +12,7 @@ class Producer {
       audio: false,
     };
     this.updateFeatures = updateFeatures;
+    this.connected = false;
   }
 
   getMediaStream() {
@@ -48,7 +49,6 @@ class Producer {
   }
 
   addStreamingMedia() {
-    console.log('in add media', this.serverConnection);
     console.log('adding streaming media');
     const tracks = this.mediaStream.getTracks();
     if (tracks.length === 0) return;
@@ -68,6 +68,7 @@ class Producer {
     console.log('connecting to signlaing server');
     this.socket.emit('clientConnect', { type: 'client', id: this.id });
     this.establishCallFeatures.call(this);
+    this.connected = true;
   }
 
   async handleProducerHandshake({ description, candidate }) {
@@ -143,7 +144,11 @@ class Producer {
     this.featuresChannel.onopen = (event) => {
       console.log('Features channel opened.');
       this.featuresChannel.send(
-        JSON.stringify({ id: this.id, features: this.features })
+        JSON.stringify({
+          id: this.id,
+          features: this.features,
+          initialConnect: true,
+        })
       );
     };
 
@@ -169,9 +174,11 @@ class Producer {
     this.features.audio = audio.enabled = !audio.enabled;
 
     // Share features
-    this.featuresChannel.send(
-      JSON.stringify({ id: this.id, features: this.features })
-    );
+    if (this.connected) {
+      this.featuresChannel.send(
+        JSON.stringify({ id: this.id, features: this.features })
+      );
+    }
   }
 }
 

@@ -31,8 +31,7 @@ const MuteImage = styled.img`
 const SelfVideo = (props: SelfVideoProps) => {
   const { srcObject, isMuted } = props;
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  // const [isMuted, setIsMuted] = useState(true);
-  console.log(isMuted);
+
   useEffect(() => {
     if (videoRef.current && srcObject) {
       videoRef.current.srcObject = srcObject;

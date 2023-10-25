@@ -31,9 +31,7 @@ const MuteImage = styled.img`
 
 const PeerVideo = (props: PeerVideoProps) => {
   const { srcObject, id, audioEnabled } = props;
-  console.log(id);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  // const [isMuted, setIsMuted] = useState(true);
 
   useEffect(() => {
     if (videoRef.current && srcObject) {

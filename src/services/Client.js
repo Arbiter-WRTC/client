@@ -8,6 +8,7 @@ import { RTC_CONFIG } from '../constants';
 class Client {
   constructor(onUpdateConsumers) {
     this.id = uuidv4();
+    console.log(`%cI AM CLIENT ${this.id}`, 'color: green');
     this.socket = socket;
     this.producer = new Producer(
       this.socket,
@@ -20,12 +21,16 @@ class Client {
     this.bindSocketEvents();
   }
 
-  updateFeatures(id, features) {
-    const consumer = this.consumers.get(id);
-    consumer.features = features;
+  updateFeatures(remotePeerId, features) {
+    let consumer = this.consumers.get(remotePeerId);
 
-    console.log('Updating features on:', id);
-    console.log(consumer.features);
+    // The features are sometimes shared before a consumer exists for this id
+    // because consumer handshake hasn't made it here yet
+    if (!consumer) {
+      consumer = this.createNewConsumer(this.id, remotePeerId);
+    }
+    consumer.setFeatures(features);
+
     this.onUpdateConsumers(this.consumers);
   }
 
@@ -71,11 +76,21 @@ class Client {
     });
   }
 
+  createNewConsumer(clientId, remotePeerId) {
+    const consumer = new Consumer(
+      this.socket,
+      remotePeerId,
+      clientId,
+      RTC_CONFIG
+    );
+    this.consumers.set(remotePeerId, consumer);
+    return consumer;
+  }
+
   handleConsumerHandshake({ clientId, remotePeerId, description, candidate }) {
     let consumer = this.consumers.get(remotePeerId);
     if (!consumer) {
-      consumer = new Consumer(this.socket, remotePeerId, clientId, RTC_CONFIG);
-      this.consumers.set(remotePeerId, consumer);
+      consumer = this.createNewConsumer(clientId, remotePeerId);
     }
 
     consumer.handshake(description, candidate);

@@ -12,6 +12,10 @@ class Consumer {
     this.features = {};
   }
 
+  setFeatures(features) {
+    this.features = features;
+  }
+
   getMediaStream() {
     return this.mediaStream;
   }
@@ -24,12 +28,8 @@ class Consumer {
   }
 
   handleRtcIceCandidate({ candidate }) {
-    // console.log('handling ice candidate');
     if (candidate) {
       // console.log(
-      //   'attempting to handle an ICE candidate type ',
-      //   candidate.type
-      // );
       this.socket.emit('consumerHandshake', {
         candidate,
         clientId: this.clientId,
@@ -39,7 +39,6 @@ class Consumer {
   }
 
   handleRtcPeerTrack({ track }) {
-    // TODO
     console.log(`handle incoming ${track.kind} track...`);
     this.mediaTracks[track.kind] = track;
     this.mediaStream.addTrack(track);
@@ -68,7 +67,11 @@ class Consumer {
         console.log(
           `Sending ${this.connection.localDescription.type} to ${this.remotePeerId}`
         );
-        console.log('attempting to handshake', this.id, this.remotePeerId);
+        console.log(
+          'attempting to handshake',
+          this.clientId,
+          this.remotePeerId
+        );
 
         this.socket.emit('consumerHandshake', {
           description: this.connection.localDescription,
