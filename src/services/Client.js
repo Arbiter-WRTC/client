@@ -100,6 +100,10 @@ class Client {
   toggleMic() {
     this.producer.toggleMic();
   }
+
+  toggleCam() {
+    this.producer.toggleCam();
+  }
 }
 
 export default Client;

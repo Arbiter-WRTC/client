@@ -2,12 +2,24 @@ import { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 
 type PeerVideoProps = {
-  srcObject: MediaStream;
   id: string;
+  srcObject: MediaStream;
   audioEnabled: boolean;
+  videoEnabled: boolean;
 };
 
 const Video = styled.video`
+  max-width: 100%;
+  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  margin: 0; /* Remove any margin */
+  padding: 0; /* Remove any padding */
+  display: block; /* Ensure block display to avoid inline spacing */
+`;
+
+const Poster = styled.img`
   max-width: 100%;
   max-height: 100%;
   width: 100%;
@@ -30,14 +42,19 @@ const MuteImage = styled.img`
 `;
 
 const PeerVideo = (props: PeerVideoProps) => {
-  const { srcObject, id, audioEnabled } = props;
+  const { srcObject, id, audioEnabled, videoEnabled } = props;
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
   useEffect(() => {
-    if (videoRef.current && srcObject) {
-      videoRef.current.srcObject = srcObject;
+    if (videoRef.current) {
+      if (videoEnabled && srcObject) {
+        videoRef.current.srcObject = srcObject;
+        videoRef.current.style.display = 'block';
+      } else {
+        videoRef.current.style.display = 'none';
+      }
     }
-  }, [srcObject]);
+  }, [srcObject, videoEnabled]);
 
   return (
     <>
@@ -47,13 +64,17 @@ const PeerVideo = (props: PeerVideoProps) => {
           src="./src/assets/muted.png"
           alt="Mute"
         />
-        <Video
-          ref={videoRef}
-          id={props.id}
-          className="video"
-          autoPlay
-          playsInline
-        ></Video>
+        {videoEnabled ? (
+          <Video
+            ref={videoRef}
+            id={id}
+            className="video"
+            autoPlay
+            playsInline
+          ></Video>
+        ) : (
+          <Poster src="./src/assets/poster.svg"></Poster>
+        )}
       </VideoWrapper>
     </>
   );

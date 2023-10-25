@@ -34,7 +34,7 @@ const VideoGridItem = styled.div`
   overflow: hidden;
 `;
 
-const VideoGrid = ({ consumers, clientConnection, isMuted }) => {
+const VideoGrid = ({ consumers, clientConnection, isMuted, isCamHidden }) => {
   const consumerCount = consumers.size;
   // const consumerCount = consumers.length;
   let columns = 1;
@@ -73,6 +73,7 @@ const VideoGrid = ({ consumers, clientConnection, isMuted }) => {
           <SelfVideo
             srcObject={clientConnection.getMediaStream()}
             isMuted={isMuted}
+            isCamHidden={isCamHidden}
           />
         </VideoGridItem>
 
@@ -83,6 +84,7 @@ const VideoGrid = ({ consumers, clientConnection, isMuted }) => {
               id={consumerId}
               key={consumerId}
               audioEnabled={consumer.features.audio}
+              videoEnabled={consumer.features.video}
             />
           </VideoGridItem>
         ))}

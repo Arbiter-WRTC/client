@@ -15,6 +15,7 @@ function App() {
   const [consumers, setConsumers] = useState(new Map());
   // const [participants, setParticipants] = useState([]);
   const [isMuted, setIsMuted] = useState(true);
+  const [isCamHidden, setIsCamHidden] = useState(false);
 
   const handleUpdateConsumers = (clientConsumers) => {
     setConsumers(new Map(clientConsumers));
@@ -58,6 +59,13 @@ function App() {
     }
   };
 
+  const handleToggleCam = () => {
+    setIsCamHidden(!isCamHidden);
+    if (client) {
+      client.toggleCam();
+    }
+  };
+
   return (
     <>
       <div id="media-toggles">
@@ -77,6 +85,7 @@ function App() {
           aria-checked="true"
           type="button"
           id="toggle-cam"
+          onClick={handleToggleCam}
         >
           Cam
         </button>
@@ -95,6 +104,7 @@ function App() {
               consumers={consumers}
               clientConnection={client.getProducer()}
               isMuted={isMuted}
+              isCamHidden={isCamHidden}
             />
           )}
         </>
