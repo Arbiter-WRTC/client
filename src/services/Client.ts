@@ -4,9 +4,25 @@ import Consumer from './Consumer';
 import Producer from './Producer';
 import { RTC_CONFIG } from '../constants';
 
-// const RTC_CONFIG = import.meta.env.VITE_RTC_CONFIG;
+type HandshakeProps = {
+  clientId: string;
+  remotePeerId: string;
+  description: RTCSessionDescription;
+  candidate: RTCIceCandidate;
+};
+
 class Client {
-  constructor(onUpdateConsumers) {
+  id: string;
+
+  socket: typeof socket;
+
+  producer: Producer;
+
+  consumers: Map<string, Consumer>;
+
+  onUpdateConsumers: (consumers: Map<string, Consumer>) => void;
+
+  constructor(onUpdateConsumers: (consumers: Map<string, Consumer>) => void) {
     this.id = uuidv4();
     console.log(`%cI AM CLIENT ${this.id}`, 'color: green');
     this.socket = socket;
@@ -14,14 +30,17 @@ class Client {
       this.socket,
       this.id,
       RTC_CONFIG,
-      this.updateFeatures.bind(this)
+      this.updateFeatures.bind(this),
     );
     this.consumers = new Map();
     this.onUpdateConsumers = onUpdateConsumers;
     this.bindSocketEvents();
   }
 
-  updateFeatures(remotePeerId, features) {
+  updateFeatures(
+    remotePeerId: string,
+    features: { audio: boolean; video: boolean },
+  ) {
     let consumer = this.consumers.get(remotePeerId);
 
     // The features are sometimes shared before a consumer exists for this id
@@ -76,18 +95,23 @@ class Client {
     });
   }
 
-  createNewConsumer(clientId, remotePeerId) {
+  createNewConsumer(clientId: string, remotePeerId: string) {
     const consumer = new Consumer(
       this.socket,
       remotePeerId,
       clientId,
-      RTC_CONFIG
+      RTC_CONFIG,
     );
     this.consumers.set(remotePeerId, consumer);
     return consumer;
   }
 
-  handleConsumerHandshake({ clientId, remotePeerId, description, candidate }) {
+  handleConsumerHandshake({
+    clientId,
+    remotePeerId,
+    description,
+    candidate,
+  }: HandshakeProps) {
     let consumer = this.consumers.get(remotePeerId);
     if (!consumer) {
       consumer = this.createNewConsumer(clientId, remotePeerId);
