@@ -1,17 +1,52 @@
+import { Socket } from 'socket.io-client';
+import Consumer from './Consumer';
+
+type MediaTracks = {
+  audio: MediaStreamTrack | undefined;
+  video: MediaStreamTrack | undefined;
+};
+
+type Features = {
+  audio: boolean; 
+  video: boolean;
+};
+
 class Producer {
-  constructor(socket, id, RTC_CONFIG, updateFeatures) {
+  id: string;
+
+  serverConnection: RTCPeerConnection;
+
+  socket: Socket;
+
+  media: null | Promise<MediaStream>; 
+
+  mediaTracks: MediaTracks;
+
+  mediaStream: MediaStream;
+
+  features: Features;
+
+  featuresChannel: null | RTCDataChannel;
+
+  updateFeatures: (consumers: Map<string, Consumer>) => void;
+
+  connected: boolean;
+
+  constructor(socket: Socket, id: string, RTC_CONFIG: RTCConfiguration, updateFeatures: (consumers: Map<string, Consumer>) => void) {
     this.id = id;
     this.serverConnection = new RTCPeerConnection(RTC_CONFIG);
     this.socket = socket;
     this.registerSocketCallbacks();
     this.requestUserMedia();
+    this.media = null;
     this.mediaStream = new MediaStream();
-    this.mediaTracks = {};
+    this.mediaTracks = { audio: undefined, video: undefined };;
     console.log('Producer constructed');
     this.features = {
       audio: false,
       video: true,
     };
+    this.featuresChannel = null;
     this.updateFeatures = updateFeatures;
     this.connected = false;
   }
@@ -39,8 +74,8 @@ class Producer {
       audio: true,
       video: true,
     });
-    this.mediaTracks.video = this.media.getVideoTracks()[0];
-    this.mediaTracks.audio = this.media.getAudioTracks()[0];
+    this.mediaTracks.video = this.media?.getVideoTracks()[0];
+    this.mediaTracks.audio = this.media?.getAudioTracks()[0];
     console.log(this.media.getAudioTracks());
 
     this.mediaTracks.audio.enabled = this.features.audio;
@@ -48,7 +83,6 @@ class Producer {
 
     this.mediaStream.addTrack(this.mediaTracks.video);
     this.mediaStream.addTrack(this.mediaTracks.audio);
-    // this.addStreamingMedia.bind(this);
   }
 
   addStreamingMedia() {
@@ -75,8 +109,7 @@ class Producer {
     this.connected = true;
   }
 
-  async handleProducerHandshake({ description, candidate }) {
-    // console.log(data);
+  async handleProducerHandshake({ description, candidate } : { description: RTCSessionDescription; candidate: RTCIceCandidate }) {
     console.log('Got a description or candidate');
     if (description) {
       console.log('Got a description, setting');
@@ -102,7 +135,7 @@ class Producer {
       this.handleRtcConnectionStateChange.bind(this);
   }
 
-  handleRtcIceCandidate({ candidate }) {
+  handleRtcIceCandidate({ candidate } : RTCIceCandidate) {
     if (candidate) {
       console.log(
         'attempting to handle an ICE candidate type ',
@@ -133,7 +166,7 @@ class Producer {
       {
         negotiated: true,
         id: 100,
-      }
+      },
     );
     const callback = (event) => console.log('got a message', event.data);
     this.serverConnection.chatChannel.onmessage = callback.bind(this);
@@ -147,7 +180,7 @@ class Producer {
 
     this.featuresChannel.onopen = (event) => {
       console.log('Features channel opened.');
-      this.featuresChannel.send(
+      this.featuresChannel?.send(
         JSON.stringify({
           id: this.id,
           features: this.features,

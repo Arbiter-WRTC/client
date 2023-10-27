@@ -1,18 +1,54 @@
+import { Socket } from 'socket.io-client';
+
+type MediaTracks = {
+  audio: MediaStreamTrack | undefined;
+  video: MediaStreamTrack | undefined;
+};
+
+type Features = {
+  audio: boolean; 
+  video: boolean;
+};
+
+interface MediaStreamTrackEventWithTrack extends MediaStreamTrackEvent {
+  track: MediaStreamTrackWithKind;
+}
+
+interface MediaStreamTrackWithKind extends MediaStreamTrack {
+  kind: 'audio' | 'video';
+}
+
+
 class Consumer {
-  constructor(socket, remotePeerId, clientId, RTC_CONFIG) {
+  socket: Socket;
+
+  remotePeerId: String;
+
+  clientId: String;
+
+  connection: RTCPeerConnection;
+
+  isNegotiating: boolean;
+
+  mediaTracks: MediaTracks;
+
+  mediaStream: MediaStream;
+
+  features: Features;
+
+  constructor(socket: Socket, remotePeerId: string, clientId: string, RTC_CONFIG: RTCConfiguration | undefined) {
     this.socket = socket;
     this.remotePeerId = remotePeerId;
     this.clientId = clientId;
     this.connection = new RTCPeerConnection(RTC_CONFIG);
     this.registerConnectionCallbacks();
     this.isNegotiating = false;
-    // this.addChatChannel();
-    this.mediaTracks = {};
+    this.mediaTracks = { audio: undefined, video: undefined };
     this.mediaStream = new MediaStream();
-    this.features = {};
+    this.features = { audio: false, video: false };
   }
 
-  setFeatures(features) {
+  setFeatures(features: Features) {
     this.features = features;
   }
 
@@ -27,9 +63,8 @@ class Consumer {
       this.handleRtcConnectionStateChange.bind(this);
   }
 
-  handleRtcIceCandidate({ candidate }) {
+  handleRtcIceCandidate({ candidate }: RTCIceCandidate) { // note: confirm
     if (candidate) {
-      // console.log(
       this.socket.emit('consumerHandshake', {
         candidate,
         clientId: this.clientId,
@@ -38,7 +73,7 @@ class Consumer {
     }
   }
 
-  handleRtcPeerTrack({ track }) {
+  handleRtcPeerTrack({ track }: MediaStreamTrackEventWithTrack) { // note: confirm
     console.log(`handle incoming ${track.kind} track...`);
     this.mediaTracks[track.kind] = track;
     this.mediaStream.addTrack(track);
@@ -48,7 +83,7 @@ class Consumer {
     console.log(`State changed to ${this.connection.connectionState}`);
   }
 
-  async handshake(description, candidate) {
+  async handshake(description: RTCSessionDescription, candidate: RTCIceCandidate) {
     if (description) {
       console.log('trying to negotiate', description.type);
 
@@ -65,7 +100,7 @@ class Consumer {
         await this.connection.setLocalDescription();
 
         console.log(
-          `Sending ${this.connection.localDescription.type} to ${this.remotePeerId}`
+          `Sending ${this.connection?.localDescription?.type} to ${this.remotePeerId}`
         );
         console.log(
           'attempting to handshake',
