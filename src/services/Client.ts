@@ -4,8 +4,16 @@ import Consumer from './Consumer';
 import Producer from './Producer';
 import { RTC_CONFIG } from '../constants';
 
-type HandshakeProps = {
-  clientId: string;
+// type HandshakeProps = {
+//   receiver: string;
+//   remotePeerId: string;
+//   description: RTCSessionDescription;
+//   candidate: RTCIceCandidate;
+// };
+
+type HandshakeData = {
+  sender: string;
+  receiver: string;
   remotePeerId: string;
   description: RTCSessionDescription;
   candidate: RTCIceCandidate;
@@ -13,11 +21,8 @@ type HandshakeProps = {
 
 class Client {
   id: string;
-
   socket: typeof socket;
-
   producer: Producer;
-
   consumers: Map<string, Consumer>;
 
   onUpdateConsumers: (consumers: Map<string, Consumer>) => void;
@@ -25,21 +30,47 @@ class Client {
   constructor(onUpdateConsumers: (consumers: Map<string, Consumer>) => void) {
     this.id = uuidv4();
     console.log(`%cI AM CLIENT ${this.id}`, 'color: green');
-    this.socket = socket;
+    this.socket = null;
     this.producer = new Producer(
       this.socket,
       this.id,
       RTC_CONFIG,
-      this.updateFeatures.bind(this),
+      this.updateFeatures.bind(this)
     );
     this.consumers = new Map();
     this.onUpdateConsumers = onUpdateConsumers;
-    this.bindSocketEvents();
+  }
+
+  createWebSocket() {
+    this.socket = new WebSocket('wss://rufdlv7k6k.execute-api.us-east-2.amazonaws.com/production');
+    this.registerSocketCallbacks();
+    this.producer.registerSocket(this.socket);
+  }
+
+  registerSocketCallbacks() {
+    this.socket.addEventListener('message', this.handleMessage.bind(this));
+  }
+
+  handleMessage(e) {
+    const data = JSON.parse(e.data);
+    console.log('Got a message:', data);
+
+    switch (data.type) {
+      case 'producer':
+        this.producer.handleProducerHandshake(data);
+        break;
+      case 'consumer':
+        this.handleConsumerHandshake(data);
+        break;
+      default:
+        console.log("invalid handshake type");
+        break;
+    }
   }
 
   updateFeatures(
     remotePeerId: string,
-    features: { audio: boolean; video: boolean },
+    features: { audio: boolean; video: boolean }
   ) {
     let consumer = this.consumers.get(remotePeerId);
 
@@ -74,50 +105,47 @@ class Client {
   }
 
   bindSocketEvents() {
-    this.socket.on(
-      'consumerHandshake',
-      this.handleConsumerHandshake.bind(this)
-    );
+    // this.socket.on(
+    //   'consumerHandshake',
+    //   this.handleConsumerHandshake.bind(this)
+    // );
 
-    socket.on('error', (e) => {
-      console.log(e);
-    });
+    // socket.on('error', (e) => {
+    //   console.log(e);
+    // });
 
-    socket.on('disconnect', this.disconnect);
+    // socket.on('disconnect', this.disconnect);
 
-    socket.on('clientDisconnect', (data) => {
-      const { clientId } = data;
-      console.log('Client disconnected:');
-      console.log(this.consumers);
-      console.log(data);
-      this.consumers.delete(clientId);
-      this.onUpdateConsumers(this.consumers);
-    });
+    // socket.on('clientDisconnect', (data) => {
+    //   const { clientId } = data;
+    //   console.log('Client disconnected:');
+    //   console.log(this.consumers);
+    //   console.log(data);
+    //   this.consumers.delete(clientId);
+    //   this.onUpdateConsumers(this.consumers);
+    // });
   }
 
   createNewConsumer(clientId: string, remotePeerId: string) {
+    console.log('%c!!!!!!!!CREATING NEW CONSUMER!!!!!!!!!!!!', 'color:red');
     const consumer = new Consumer(
-      this.socket,
-      remotePeerId,
       clientId,
-      RTC_CONFIG,
+      remotePeerId,
+      this.socket,
+      RTC_CONFIG
     );
     this.consumers.set(remotePeerId, consumer);
     return consumer;
   }
 
-  handleConsumerHandshake({
-    clientId,
-    remotePeerId,
-    description,
-    candidate,
-  }: HandshakeProps) {
+  handleConsumerHandshake(data: HandshakeData) {
+    const { receiver, remotePeerId } = data;
     let consumer = this.consumers.get(remotePeerId);
     if (!consumer) {
-      consumer = this.createNewConsumer(clientId, remotePeerId);
+      consumer = this.createNewConsumer(receiver, remotePeerId);
     }
 
-    consumer.handshake(description, candidate);
+    consumer.handshake(data);
     this.onUpdateConsumers(this.consumers);
   }
 
