@@ -6,7 +6,7 @@ type MediaTracks = {
 };
 
 type Features = {
-  audio: boolean; 
+  audio: boolean;
   video: boolean;
 };
 
@@ -18,34 +18,41 @@ interface MediaStreamTrackWithKind extends MediaStreamTrack {
   kind: 'audio' | 'video';
 }
 
+type HandshakeData = {
+  sender: string;
+  receiver: string;
+  remotePeerId: string;
+  description: RTCSessionDescription;
+  candidate: RTCIceCandidate;
+};
 
 class Consumer {
   socket: Socket;
-
   remotePeerId: String;
-
   clientId: String;
-
   connection: RTCPeerConnection;
-
   isNegotiating: boolean;
-
   mediaTracks: MediaTracks;
-
   mediaStream: MediaStream;
-
   features: Features;
+  queuedCandidates: Array<RTCIceCandidate>;
 
-  constructor(socket: Socket, remotePeerId: string, clientId: string, RTC_CONFIG: RTCConfiguration | undefined) {
-    this.socket = socket;
-    this.remotePeerId = remotePeerId;
+  constructor(
+    clientId: string,
+    remotePeerId: string,
+    socket: Socket,
+    RTC_CONFIG: RTCConfiguration | undefined
+  ) {
     this.clientId = clientId;
+    this.remotePeerId = remotePeerId;
+    this.socket = socket;
     this.connection = new RTCPeerConnection(RTC_CONFIG);
     this.registerConnectionCallbacks();
     this.isNegotiating = false;
     this.mediaTracks = { audio: undefined, video: undefined };
     this.mediaStream = new MediaStream();
     this.features = { audio: false, video: false };
+    this.queuedCandidates = [];
   }
 
   setFeatures(features: Features) {
@@ -63,17 +70,30 @@ class Consumer {
       this.handleRtcConnectionStateChange.bind(this);
   }
 
-  handleRtcIceCandidate({ candidate }: RTCIceCandidate) { // note: confirm
+  handleRtcIceCandidate({ candidate }: RTCIceCandidate) {
+    // note: confirm
     if (candidate) {
-      this.socket.emit('consumerHandshake', {
-        candidate,
-        clientId: this.clientId,
-        remotePeerId: this.remotePeerId,
-      });
+      // this.socket.emit('consumerHandshake', {
+      //   candidate,
+      //   clientId: this.clientId,
+      //   remotePeerId: this.remotePeerId,
+      // });
+      console.log('attempting to handle an ice candidate');
+      const payload = {
+        action: 'handshake',
+        data: {
+          type: 'consumer',
+          sender: this.clientId,
+          remotePeerId: this.remotePeerId,
+          candidate: candidate,
+        },
+      };
+      this.socket.send(JSON.stringify(payload));
     }
   }
 
-  handleRtcPeerTrack({ track }: MediaStreamTrackEventWithTrack) { // note: confirm
+  handleRtcPeerTrack({ track }: MediaStreamTrackEventWithTrack) {
+    // note: confirm
     console.log(`handle incoming ${track.kind} track...`);
     this.mediaTracks[track.kind] = track;
     this.mediaStream.addTrack(track);
@@ -83,7 +103,22 @@ class Consumer {
     console.log(`State changed to ${this.connection.connectionState}`);
   }
 
-  async handshake(description: RTCSessionDescription, candidate: RTCIceCandidate) {
+  modifyIceAttributes(sdp) {
+    const iceAttributesRegex = /a=(ice-pwd:|ice-ufrag:)(.*)/gi;
+    const modifiedSdp = sdp.replace(
+      iceAttributesRegex,
+      (match, attribute, value) => {
+        // Replace spaces with '+'
+        const modifiedValue = value.replace(/ /g, '+');
+        return `a=${attribute}${modifiedValue}`;
+      }
+    );
+    return modifiedSdp;
+  }
+
+
+  async handshake(data: HandshakeData) {
+    const { description, candidate } = data;
     if (description) {
       console.log('trying to negotiate', description.type);
 
@@ -93,6 +128,7 @@ class Consumer {
       }
 
       this.isNegotiating = true;
+      description.sdp = this.modifyIceAttributes(description.sdp);
       await this.connection.setRemoteDescription(description);
       this.isNegotiating = false;
 
@@ -108,15 +144,49 @@ class Consumer {
           this.remotePeerId
         );
 
-        this.socket.emit('consumerHandshake', {
-          description: this.connection.localDescription,
-          clientId: this.clientId,
-          remotePeerId: this.remotePeerId,
-        });
+        // this.socket.emit('consumerHandshake', {
+        //   description: this.connection.localDescription,
+        //   clientId: this.clientId,
+        //   remotePeerId: this.remotePeerId,
+        // });
+        const payload = {
+          action: 'handshake',
+          data: {
+            type: 'consumer',
+            sender: this.clientId,
+            remotePeerId: this.remotePeerId,
+            description: this.connection.localDescription,
+          },
+        };
+        this.socket.send(JSON.stringify(payload));
+        this.processQueuedCandidates();
       }
     } else if (candidate) {
       try {
-        console.log('Adding an ice candidate');
+        this.handleReceivedIceCandidate(candidate);
+      } catch (e) {
+        if (candidate.candidate.length > 1) {
+          console.log('unable to add ICE candidate for peer', e);
+        }
+      }
+    }
+  }
+
+  async handleReceivedIceCandidate(candidate) {
+    if (this.connection.remoteDescription === null) {
+      console.log('Caching candidate');
+      this.queuedCandidates.push(candidate);
+    } else {
+      console.log('Adding an ice candidate');
+      await this.connection.addIceCandidate(candidate);
+    }
+  }
+
+  async processQueuedCandidates() {
+    console.log('Processing cached candidates IN PRODUCER');
+    while (this.queuedCandidates.length > 0) {
+      const candidate = this.queuedCandidates.shift();
+      try {
         await this.connection.addIceCandidate(candidate);
       } catch (e) {
         if (candidate.candidate.length > 1) {

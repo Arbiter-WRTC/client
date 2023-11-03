@@ -92,7 +92,7 @@ function App() {
       </div>
       {client && (
         <>
-          <button onClick={client.connect.bind(client)}>Connect</button>
+          <button onClick={client.createWebSocket.bind(client)}>Connect</button>
           <button onClick={client.sendMessage.bind(client)}>
             Send Message
           </button>
