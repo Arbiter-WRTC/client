@@ -28,7 +28,7 @@ function App() {
   };
 
   useEffect(() => {
-    setClient(new Client(handleUpdateConsumers, handleUpdateFeatures));
+    setClient(new Client('ABCD', handleUpdateConsumers, handleUpdateFeatures));
     // cleanup to socket server to remove entry from map
   }, []);
 

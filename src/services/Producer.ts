@@ -28,6 +28,7 @@ type HandshakeData = {
 
 class Producer {
   id: string;
+  roomId: string;
   connection: RTCPeerConnection;
   socket: Socket;
   media: null | Promise<MediaStream>;
@@ -43,10 +44,12 @@ class Producer {
   constructor(
     socket: Socket,
     id: string,
+    roomId: string,
     RTC_CONFIG: RTCConfiguration,
     updateFeatures: (consumers: Map<string, Consumer>) => void
   ) {
     this.id = id;
+    this.roomId = roomId;
     this.connection = new RTCPeerConnection(RTC_CONFIG);
     this.socket = socket;
     // this.registerSocketCallbacks();
@@ -132,6 +135,7 @@ class Producer {
       data: {
         id: this.id,
         type: 'client',
+        roomId: this.roomId,
       },
     };
 

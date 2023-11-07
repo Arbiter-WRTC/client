@@ -2,7 +2,7 @@ import { socket } from './socket';
 import { v4 as uuidv4 } from 'uuid';
 import Consumer from './Consumer';
 import Producer from './Producer';
-import { RTC_CONFIG } from '../constants';
+import { RTC_CONFIG, SIGNAL_SERVER_URL } from '../constants';
 
 // type HandshakeProps = {
 //   receiver: string;
@@ -21,19 +21,22 @@ type HandshakeData = {
 
 class Client {
   id: string;
+  roomId: string
   socket: typeof socket;
   producer: Producer;
   consumers: Map<string, Consumer>;
 
   onUpdateConsumers: (consumers: Map<string, Consumer>) => void;
 
-  constructor(onUpdateConsumers: (consumers: Map<string, Consumer>) => void) {
+  constructor(roomId: string, onUpdateConsumers: (consumers: Map<string, Consumer>) => void) {
     this.id = uuidv4();
+    this.roomId = roomId;
     console.log(`%cI AM CLIENT ${this.id}`, 'color: green');
     this.socket = null;
     this.producer = new Producer(
       this.socket,
       this.id,
+      this.roomId,
       RTC_CONFIG,
       this.updateFeatures.bind(this)
     );
@@ -42,7 +45,7 @@ class Client {
   }
 
   createWebSocket() {
-    this.socket = new WebSocket('wss://rufdlv7k6k.execute-api.us-east-2.amazonaws.com/production');
+    this.socket = new WebSocket(SIGNAL_SERVER_URL);
     this.registerSocketCallbacks();
     this.producer.registerSocket(this.socket);
   }
@@ -104,27 +107,6 @@ class Client {
     this.producer.sendMessage();
   }
 
-  bindSocketEvents() {
-    // this.socket.on(
-    //   'consumerHandshake',
-    //   this.handleConsumerHandshake.bind(this)
-    // );
-
-    // socket.on('error', (e) => {
-    //   console.log(e);
-    // });
-
-    // socket.on('disconnect', this.disconnect);
-
-    // socket.on('clientDisconnect', (data) => {
-    //   const { clientId } = data;
-    //   console.log('Client disconnected:');
-    //   console.log(this.consumers);
-    //   console.log(data);
-    //   this.consumers.delete(clientId);
-    //   this.onUpdateConsumers(this.consumers);
-    // });
-  }
 
   createNewConsumer(clientId: string, remotePeerId: string) {
     console.log('%c!!!!!!!!CREATING NEW CONSUMER!!!!!!!!!!!!', 'color:red');
