@@ -107,7 +107,7 @@ class Consumer {
     const iceAttributesRegex = /a=(ice-pwd:|ice-ufrag:)(.*)/gi;
     const modifiedSdp = sdp.replace(
       iceAttributesRegex,
-      (match, attribute, value) => {
+      (_, attribute, value) => {
         // Replace spaces with '+'
         const modifiedValue = value.replace(/ /g, '+');
         return `a=${attribute}${modifiedValue}`;
