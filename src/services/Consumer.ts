@@ -72,7 +72,9 @@ class Consumer {
 
   handleRtcIceCandidate({ candidate }: RTCIceCandidate) {
     // note: confirm
+    console.log("Received a CANDIDATE IN CONSUMER")
     if (candidate) {
+      console.log("PROCESING CONSUMER CANDIDATE TO SEND TO SFU")
       // this.socket.emit('consumerHandshake', {
       //   candidate,
       //   clientId: this.clientId,

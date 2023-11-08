@@ -64,7 +64,7 @@ class Client {
         this.handleConsumerHandshake(data);
         break;
       default:
-        console.log("invalid handshake type");
+        console.log('invalid handshake type');
         break;
     }
   }

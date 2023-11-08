@@ -14,7 +14,6 @@ import { API_STACK_URL } from '../constants';
 const Arbiter = () => {
   const [client, setClient] = useState(null);
   const [consumers, setConsumers] = useState(new Map());
-  // const [participants, setParticipants] = useState([]);
   const [isMuted, setIsMuted] = useState(true);
   const [isCamHidden, setIsCamHidden] = useState(false);
   const [path, setPath] = useState(null);
@@ -58,12 +57,12 @@ const Arbiter = () => {
 
   useEffect(() => {
     setClient(new Client(handleUpdateConsumers));
-    // cleanup to socket server to remove entry from map
   }, []);
 
   useEffect(() => {
     (async () => {
       const urlPath = 'testTy';
+
       if (!path) {
         await setPath(urlPath);
       }
