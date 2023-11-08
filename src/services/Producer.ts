@@ -54,12 +54,10 @@ class Producer {
   constructor(
     socket: Socket,
     id: string,
-    roomId: string,
     RTC_CONFIG: RTCConfiguration,
     updateFeatures: (consumers: Map<string, Consumer>) => void
   ) {
     this.id = id;
-    this.roomId = roomId;
     this.connection = new RTCPeerConnection(RTC_CONFIG);
     this.socket = socket;
     // this.registerSocketCallbacks();
@@ -75,6 +73,7 @@ class Producer {
     this.featuresChannel = null;
     this.updateFeatures = updateFeatures;
     this.connected = false;
+    this.roomId = '';
 
     this.queuedCandidates = [];
     this.roomId = null;
@@ -148,7 +147,7 @@ class Producer {
         type: 'client',
       },
     };
-    console.log("Going to send identify signal:", payload)
+    console.log("Identify payload:", payload)
 
     this.socket.send(JSON.stringify(payload));
 
@@ -185,7 +184,7 @@ class Producer {
 
     if (description) {
       console.log('Got a description, setting');
-      description.sdp = this.modifyIceAttributes(description.sdp);
+      // description.sdp = this.modifyIceAttributes(description.sdp);
       await this.connection.setRemoteDescription(description);
       this.processQueuedCandidates();
     } else if (candidate) {

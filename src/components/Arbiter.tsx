@@ -10,7 +10,6 @@ import Client from '../services/Client';
 import VideoGrid from './VideoGrid';
 import axios from 'axios';
 import { API_STACK_URL } from '../constants';
-// import './App.css';
 
 const Arbiter = () => {
   const [client, setClient] = useState(null);
@@ -23,8 +22,6 @@ const Arbiter = () => {
   const handleUpdateConsumers = (clientConsumers) => {
     setConsumers(new Map(clientConsumers));
   };
-
-  const handleUpdateFeatures = (id, features) => {};
 
   const getRoomId = async () => {
     try {
@@ -59,12 +56,13 @@ const Arbiter = () => {
   };
 
   useEffect(() => {
-    setClient(new Client(handleUpdateConsumers, handleUpdateFeatures));
+    setClient(new Client(handleUpdateConsumers));
   }, []);
 
   useEffect(() => {
     (async () => {
-      const urlPath = 'test';
+      const urlPath = 'testTy';
+
       if (!path) {
         await setPath(urlPath);
       }
@@ -74,20 +72,6 @@ const Arbiter = () => {
       }
     })();
   }, [client, path]);
-
-  const handleToggleMic = () => {
-    setIsMuted(!isMuted);
-    if (client) {
-      client.toggleMic();
-    }
-  };
-
-  const handleToggleCam = () => {
-    setIsCamHidden(!isCamHidden);
-    if (client) {
-      client.toggleCam();
-    }
-  };
 
   const handleClaimRoom = async () => {
     const body = {
@@ -128,7 +112,40 @@ const Arbiter = () => {
     }
   };
 
-  console.log('My current roomID:', roomId);
+  const handleAdd = () => {
+    setParticipants((prevParticipants) => {
+      console.log(prevParticipants);
+      const newParticipants = [
+        ...prevParticipants,
+        `placeholder${prevParticipants.length}`,
+      ];
+      console.log(newParticipants);
+      return newParticipants;
+    });
+  };
+
+  const handleRemove = () => {
+    setParticipants((prevParticipants) => {
+      const newParticipants = [...prevParticipants];
+      newParticipants.shift();
+      return newParticipants;
+    });
+  };
+
+  const handleToggleMic = () => {
+    setIsMuted(!isMuted);
+    if (client) {
+      client.toggleMic();
+    }
+  };
+
+  const handleToggleCam = () => {
+    setIsCamHidden(!isCamHidden);
+    if (client) {
+      client.toggleCam();
+    }
+  };
+
   return (
     <>
       <div id="media-toggles">
