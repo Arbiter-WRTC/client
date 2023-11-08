@@ -28,15 +28,13 @@ class Client {
 
   onUpdateConsumers: (consumers: Map<string, Consumer>) => void;
 
-  constructor(roomId: string, onUpdateConsumers: (consumers: Map<string, Consumer>) => void) {
+  constructor(onUpdateConsumers: (consumers: Map<string, Consumer>) => void) {
     this.id = uuidv4();
-    this.roomId = roomId;
     console.log(`%cI AM CLIENT ${this.id}`, 'color: green');
     this.socket = null;
     this.producer = new Producer(
       this.socket,
       this.id,
-      this.roomId,
       RTC_CONFIG,
       this.updateFeatures.bind(this)
     );
@@ -89,6 +87,11 @@ class Client {
 
   getProducer() {
     return this.producer;
+  }
+
+  updateRoomId(roomId: string) {
+    console.log("Gonna update roomID on Producer", roomId)
+    this.producer.updateRoomId(roomId);
   }
 
   // dev only

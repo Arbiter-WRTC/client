@@ -128,7 +128,7 @@ class Consumer {
       }
 
       this.isNegotiating = true;
-      description.sdp = this.modifyIceAttributes(description.sdp);
+      // description.sdp = this.modifyIceAttributes(description.sdp);
       await this.connection.setRemoteDescription(description);
       this.isNegotiating = false;
 

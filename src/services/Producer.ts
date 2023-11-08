@@ -28,15 +28,25 @@ type HandshakeData = {
 
 class Producer {
   id: string;
+
   roomId: string;
+  
   connection: RTCPeerConnection;
+
   socket: Socket;
+
   media: null | Promise<MediaStream>;
+  
   mediaTracks: MediaTracks;
+
   mediaStream: MediaStream;
+
   features: Features;
+
   featuresChannel: null | RTCDataChannel;
+
   connected: boolean;
+
   queuedCandidates: Array<RTCIceCandidate>;
 
   updateFeatures: (consumers: Map<string, Consumer>) => void;
@@ -44,12 +54,10 @@ class Producer {
   constructor(
     socket: Socket,
     id: string,
-    roomId: string,
     RTC_CONFIG: RTCConfiguration,
     updateFeatures: (consumers: Map<string, Consumer>) => void
   ) {
     this.id = id;
-    this.roomId = roomId;
     this.connection = new RTCPeerConnection(RTC_CONFIG);
     this.socket = socket;
     // this.registerSocketCallbacks();
@@ -65,6 +73,7 @@ class Producer {
     this.featuresChannel = null;
     this.updateFeatures = updateFeatures;
     this.connected = false;
+    this.roomId = '';
 
     this.queuedCandidates = [];
   }
@@ -138,11 +147,16 @@ class Producer {
         roomId: this.roomId,
       },
     };
-
+    console.log("Identify payload:", payload)
     this.socket.send(JSON.stringify(payload));
 
     this.establishCallFeatures.call(this);
     this.connected = true;
+  }
+
+  updateRoomId(roomId: string) {
+    console.log("Producer updating roomId")
+    this.roomId = roomId;
   }
 
   modifyIceAttributes(sdp) {
@@ -169,7 +183,7 @@ class Producer {
 
     if (description) {
       console.log('Got a description, setting');
-      description.sdp = this.modifyIceAttributes(description.sdp);
+      // description.sdp = this.modifyIceAttributes(description.sdp);
       await this.connection.setRemoteDescription(description);
       this.processQueuedCandidates();
     } else if (candidate) {
