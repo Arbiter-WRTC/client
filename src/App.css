@@ -45,3 +45,41 @@
 .hidden {
   display: none;
 }
+
+/* .toggle {
+  width: 30px;
+  height: 30px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid red;
+} */
+
+/* .toggle .unmuted {
+  display: inline;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99;
+}
+
+.toggle .muted {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 99;
+}
+
+.toggle:hover .unmuted {
+  display: none;
+}
+
+.toggle:hover .muted {
+  display: inline;
+} */
+
+/* .toggle .unmuted {
+  background-color: green;
+} */

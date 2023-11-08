@@ -28,15 +28,25 @@ type HandshakeData = {
 
 class Producer {
   id: string;
+
   roomId: string;
+
   connection: RTCPeerConnection;
+
   socket: Socket;
+
   media: null | Promise<MediaStream>;
+
   mediaTracks: MediaTracks;
+
   mediaStream: MediaStream;
+
   features: Features;
+
   featuresChannel: null | RTCDataChannel;
+
   connected: boolean;
+
   queuedCandidates: Array<RTCIceCandidate>;
 
   updateFeatures: (consumers: Map<string, Consumer>) => void;
@@ -67,6 +77,7 @@ class Producer {
     this.connected = false;
 
     this.queuedCandidates = [];
+    this.roomId = null;
   }
 
   registerSocket(socket: Socket) {
@@ -129,20 +140,25 @@ class Producer {
   handleClientConnect() {
     console.log('connecting to signaling server');
     // this.socket.emit('clientConnect', { type: 'client', id: this.id });
-
     const payload = {
       action: 'identify',
       data: {
         id: this.id,
-        type: 'client',
         roomId: this.roomId,
+        type: 'client',
       },
     };
+    console.log("Going to send identify signal:", payload)
 
     this.socket.send(JSON.stringify(payload));
 
     this.establishCallFeatures.call(this);
     this.connected = true;
+  }
+
+  updateRoomId(roomId: string) {
+    console.log("Producer updating roomId")
+    this.roomId = roomId;
   }
 
   modifyIceAttributes(sdp) {
@@ -233,6 +249,7 @@ class Producer {
       };
 
       console.log('Sending an ICE candidate', payload);
+      // console.log('NOT Sending an ICE candidate', payload);
       this.socket.send(JSON.stringify(payload));
       // this.socket.emit('producerHandshake', { candidate, clientId: this.id });
     }
@@ -269,8 +286,13 @@ class Producer {
       negotiated: true,
       id: 100,
     });
-    const callback = (event) => console.log('got a message', event.data);
-    this.connection.chatChannel.onmessage = callback.bind(this);
+    // const callback = (event) => console.log('got a message', event.data);
+    this.connection.chatChannel.onmessage = this.handleChatMessage.bind(this);
+  }
+
+  handleChatMessage(event) {
+    const data = JSON.parse(event.data);
+    console.log('Got a chat message:', data);
   }
 
   addCallFeatures() {
@@ -281,13 +303,13 @@ class Producer {
 
     this.featuresChannel.onopen = (event) => {
       console.log('Features channel opened.');
-      this.featuresChannel?.send(
-        JSON.stringify({
-          id: this.id,
-          features: this.features,
-          initialConnect: true,
-        })
-      );
+      // this.featuresChannel?.send(
+      //   JSON.stringify({
+      //     id: this.id,
+      //     features: this.features,
+      //     initialConnect: true,
+      //   })
+      // );
     };
 
     this.featuresChannel.onmessage = ({ data }) => {
@@ -301,7 +323,11 @@ class Producer {
   sendMessage() {
     console.log(this.connection.chatChannel.readyState);
     if (this.connection.chatChannel.readyState === 'open') {
-      this.connection.chatChannel.send(`Hello from the Client: ${this.id}`);
+      const payload = {
+        sender: this.id,
+        message: 'hello',
+      };
+      this.connection.chatChannel.send(JSON.stringify(payload));
     }
   }
 
@@ -311,9 +337,10 @@ class Producer {
     console.log('Features in ToggleMic:', this.features);
     // Share features
     if (this.connected) {
-      this.featuresChannel.send(
-        JSON.stringify({ id: this.id, features: this.features })
-      );
+      console.log('Sending features:', this.features)
+      // this.featuresChannel.send(
+      //   JSON.stringify({ id: this.id, features: this.features })
+      // );
     }
   }
 
@@ -327,9 +354,9 @@ class Producer {
     }
     if (this.connected) {
       console.log('Sending features:', this.features);
-      this.featuresChannel.send(
-        JSON.stringify({ id: this.id, features: this.features })
-      );
+      // this.featuresChannel.send(
+      //   JSON.stringify({ id: this.id, features: this.features })
+      // );
     }
     console.log('Features in ToggleCam:', this.features);
     console.log(this.mediaStream);

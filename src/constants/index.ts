@@ -5,4 +5,10 @@ const RTC_CONFIG = import.meta.env.VITE_RTC_CONFIG
   ? JSON.parse(import.meta.env.VITE_RTC_CONFIG) 
   : undefined;
 
-export { SIGNAL_SERVER_URL, RTC_CONFIG };
+// const SIGNAL_SERVER_URL = import.meta.env.DEV 
+//   ? devSignalServerURL 
+//   : prodSignalServerURL;  // for dev 
+
+const API_STACK_URL = import.meta.env.VITE_API_STACK_URL;
+
+export { SIGNAL_SERVER_URL, RTC_CONFIG, API_STACK_URL };

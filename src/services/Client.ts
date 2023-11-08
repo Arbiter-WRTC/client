@@ -66,7 +66,7 @@ class Client {
         this.handleConsumerHandshake(data);
         break;
       default:
-        console.log("invalid handshake type");
+        console.log('invalid handshake type');
         break;
     }
   }
@@ -89,6 +89,11 @@ class Client {
 
   getProducer() {
     return this.producer;
+  }
+
+  updateRoomId(roomId: string) {
+    console.log("Gonna update roomID on Producer", roomId)
+    this.producer.updateRoomId(roomId);
   }
 
   // dev only
