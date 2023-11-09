@@ -72,3 +72,62 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* #chat {
+  height: 100%;
+  min-height: 50vh;
+  max-height: 50vh;
+  border: 1px solid #999;
+  padding: 5.5px;
+  display: flex; 
+  flex-direction: column;
+  font-weight: normal;
+} */
+
+#chat-log {
+  flex-grow: 1;
+  overflow: auto;
+  overflow-x: hidden;
+  padding-bottom: 11px;
+  margin-bottom: 5.5px;
+  min-height: 0;
+  list-style-type: none;
+}
+
+#chat-form {
+  flex-grow: 0;
+  display: flex;
+  padding: 5px;
+}
+
+#chat-log li {
+  border-radius: 5.5px;
+  padding: 5.5px;
+  margin-bottom: 5.5px;
+  max-width: 60%;
+  clear: both;
+}
+#chat-log .peer {
+  color: #1a1a1a;
+  background: #eee;
+  margin-left: -27px; /* Adjust the margin-left as needed */
+  max-width: 60%; /* Adjust the max-width as needed */
+}
+#chat-log .self {
+  background: #009;
+  color: #eee;
+  float: right;
+}
+#chat-form button {
+  cursor: pointer;
+  flex: 0 0 auto;
+  background: #009;
+  color: #eee;
+}
+#chat-form input {
+  flex: 1 1 100%;
+  padding: 9px;
+  margin-right: 5.5px;
+  border: 2px solid #999;
+  outline: 0;
+}
