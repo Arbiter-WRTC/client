@@ -14,7 +14,6 @@ import { API_STACK_URL } from '../constants';
 const Arbiter = () => {
   const [client, setClient] = useState(null);
   const [consumers, setConsumers] = useState(new Map());
-  // const [participants, setParticipants] = useState([]);
   const [isMuted, setIsMuted] = useState(true);
   const [isCamHidden, setIsCamHidden] = useState(false);
   const [path, setPath] = useState(null);

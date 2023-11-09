@@ -80,6 +80,7 @@ class Producer {
     this.roomId = '';
 
     this.queuedCandidates = [];
+    this.roomId = null;
   }
 
   registerSocket(socket: Socket) {
@@ -142,13 +143,12 @@ class Producer {
   handleClientConnect() {
     console.log('connecting to signaling server');
     // this.socket.emit('clientConnect', { type: 'client', id: this.id });
-
     const payload = {
       action: 'identify',
       data: {
         id: this.id,
-        type: 'client',
         roomId: this.roomId,
+        type: 'client',
       },
     };
     console.log('Identify payload:', payload);
@@ -252,6 +252,7 @@ class Producer {
       };
 
       console.log('Sending an ICE candidate', payload);
+      // console.log('NOT Sending an ICE candidate', payload);
       this.socket.send(JSON.stringify(payload));
       // this.socket.emit('producerHandshake', { candidate, clientId: this.id });
     }
@@ -319,13 +320,13 @@ class Producer {
 
     this.featuresChannel.onopen = (event) => {
       console.log('Features channel opened.');
-      this.featuresChannel?.send(
-        JSON.stringify({
-          id: this.id,
-          features: this.features,
-          initialConnect: true,
-        })
-      );
+      // this.featuresChannel?.send(
+      //   JSON.stringify({
+      //     id: this.id,
+      //     features: this.features,
+      //     initialConnect: true,
+      //   })
+      // );
     };
 
     this.featuresChannel.onmessage = ({ data }) => {
@@ -341,9 +342,10 @@ class Producer {
     console.log('Features in ToggleMic:', this.features);
     // Share features
     if (this.connected) {
-      this.featuresChannel.send(
-        JSON.stringify({ id: this.id, features: this.features })
-      );
+      console.log('Sending features:', this.features)
+      // this.featuresChannel.send(
+      //   JSON.stringify({ id: this.id, features: this.features })
+      // );
     }
   }
 
@@ -357,9 +359,9 @@ class Producer {
     }
     if (this.connected) {
       console.log('Sending features:', this.features);
-      this.featuresChannel.send(
-        JSON.stringify({ id: this.id, features: this.features })
-      );
+      // this.featuresChannel.send(
+      //   JSON.stringify({ id: this.id, features: this.features })
+      // );
     }
     console.log('Features in ToggleCam:', this.features);
     console.log(this.mediaStream);
