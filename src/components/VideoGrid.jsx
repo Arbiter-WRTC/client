@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SelfVideo from './SelfVideo';
 import PeerVideo from './PeerVideo';
 import {
@@ -7,8 +7,36 @@ import {
   VideoGridItem,
 } from './StyledGridComponents';
 import UI from './UI';
+import Chat from './Chat';
 
-const VideoGrid = ({ consumers, clientConnection, isMuted, isCamHidden }) => {
+import styled from 'styled-components';
+
+const UIWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const RTCComponentsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid blue;
+  max-height: 100vh;
+  position: relative; /* Change this to relative */
+  width: 70%;
+`;
+
+const VideoGrid = ({
+  consumers,
+  clientConnection,
+  isMuted,
+  isCamHidden,
+  chatLog,
+  onSendChatMessage,
+}) => {
+  const [isChatShown, setIsChatShown] = useState(false);
   const consumerCount = consumers.size;
   // const consumerCount = consumers.length;
   let columns = 1;
@@ -35,38 +63,50 @@ const VideoGrid = ({ consumers, clientConnection, isMuted, isCamHidden }) => {
     }
   }
 
-  return (
-    <>
-      <VideoGridWrapper>
-        <VideoGridContainer
-          style={{
-            gridTemplateColumns: `repeat(${columns}, 1fr)`,
-            gridTemplateRows: `repeat(${rows}, 1fr)`,
-          }}
-        >
-          <VideoGridItem key={'self'}>
-            <SelfVideo
-              srcObject={clientConnection.getMediaStream()}
-              isMuted={isMuted}
-              isCamHidden={isCamHidden}
-            />
-          </VideoGridItem>
+  const handleToggleChat = (value) => {
+    setIsChatShown(value);
+    console.log('toggling chat');
+  };
 
-          {Array.from(consumers).map(([consumerId, consumer]) => (
-            <VideoGridItem key={consumerId}>
-              <PeerVideo
-                srcObject={consumer.mediaStream}
-                id={consumerId}
-                key={consumerId}
-                audioEnabled={consumer.features.audio}
-                videoEnabled={consumer.features.video}
+  return (
+    <UIWrapper>
+      <RTCComponentsWrapper>
+        <VideoGridWrapper>
+          <VideoGridContainer
+            style={{
+              gridTemplateColumns: `repeat(${columns}, 1fr)`,
+              gridTemplateRows: `repeat(${rows}, 1fr)`,
+            }}
+          >
+            <VideoGridItem key={'self'}>
+              <SelfVideo
+                srcObject={clientConnection.getMediaStream()}
+                isMuted={isMuted}
+                isCamHidden={isCamHidden}
               />
             </VideoGridItem>
-          ))}
-        </VideoGridContainer>
-        <UI />
-      </VideoGridWrapper>
-    </>
+
+            {Array.from(consumers).map(([consumerId, consumer]) => (
+              <VideoGridItem key={consumerId}>
+                <PeerVideo
+                  srcObject={consumer.mediaStream}
+                  id={consumerId}
+                  key={consumerId}
+                  audioEnabled={consumer.features.audio}
+                  videoEnabled={consumer.features.video}
+                />
+              </VideoGridItem>
+            ))}
+          </VideoGridContainer>
+          <UI onToggleChat={handleToggleChat} />
+        </VideoGridWrapper>
+        <Chat
+          chatLog={chatLog}
+          isChatShown={isChatShown}
+          onSendChatMessage={onSendChatMessage}
+        />
+      </RTCComponentsWrapper>
+    </UIWrapper>
   );
 };
 

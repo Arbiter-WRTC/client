@@ -16,7 +16,7 @@ const UIWrapper = styled.div`
   backdrop-filter: blur(2px);
 `;
 
-const UI = () => {
+const UI = ({ onToggleChat }) => {
   const [isMuted, setIsMuted] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
   const [isChatShown, setIsChatShown] = useState(false);
@@ -31,6 +31,7 @@ const UI = () => {
   };
 
   const toggleIsChatShown = () => {
+    onToggleChat(!isChatShown);
     setIsChatShown(!isChatShown);
   };
 

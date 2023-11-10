@@ -28,20 +28,31 @@ type HandshakeData = {
 
 class Consumer {
   socket: Socket;
+
   remotePeerId: String;
+  
   clientId: String;
+  
   connection: RTCPeerConnection;
+  
   isNegotiating: boolean;
+  
   mediaTracks: MediaTracks;
+  
   mediaStream: MediaStream;
+  
   features: Features;
+  
   queuedCandidates: Array<RTCIceCandidate>;
+  
+  roomId: String;
 
   constructor(
     clientId: string,
     remotePeerId: string,
     socket: Socket,
-    RTC_CONFIG: RTCConfiguration | undefined
+    RTC_CONFIG: RTCConfiguration | undefined,
+    roomId: string,
   ) {
     this.clientId = clientId;
     this.remotePeerId = remotePeerId;
@@ -53,6 +64,7 @@ class Consumer {
     this.mediaStream = new MediaStream();
     this.features = { audio: false, video: false };
     this.queuedCandidates = [];
+    this.roomId = roomId;
   }
 
   setFeatures(features: Features) {
@@ -88,6 +100,7 @@ class Consumer {
           sender: this.clientId,
           remotePeerId: this.remotePeerId,
           candidate: candidate,
+          roomId: this.roomId,
         },
       };
       this.socket.send(JSON.stringify(payload));
@@ -158,6 +171,7 @@ class Consumer {
             sender: this.clientId,
             remotePeerId: this.remotePeerId,
             description: this.connection.localDescription,
+            roomId: this.roomId,
           },
         };
         this.socket.send(JSON.stringify(payload));

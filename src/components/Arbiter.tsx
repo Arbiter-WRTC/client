@@ -19,9 +19,24 @@ const Arbiter = () => {
   const [path, setPath] = useState(null);
   const [roomId, setRoomId] = useState(null);
 
+  const [chatLog, setChatLog] = useState([]);
+
   const handleUpdateConsumers = (clientConsumers) => {
     setConsumers(new Map(clientConsumers));
   };
+
+  const handleNewChatMessage = async (message) => {
+    console.log(
+      'In Arbiter, updating Chat Messages with a new message:',
+      message
+    );
+    console.log('Setting Chat Messages');
+    await setChatLog((prevLog) => [...prevLog, message]);
+  };
+
+  useEffect(() => {
+    console.log('Chat Messages Updated:', chatLog);
+  }, [chatLog]);
 
   const getRoomId = async () => {
     try {
@@ -56,13 +71,13 @@ const Arbiter = () => {
   };
 
   useEffect(() => {
-    setClient(new Client(handleUpdateConsumers));
+    setClient(new Client(handleUpdateConsumers, handleNewChatMessage));
+    // cleanup to socket server to remove entry from map
   }, []);
 
   useEffect(() => {
     (async () => {
-      const urlPath = 'testTy';
-
+      const urlPath = 'testTy1';
       if (!path) {
         await setPath(urlPath);
       }
@@ -112,26 +127,6 @@ const Arbiter = () => {
     }
   };
 
-  const handleAdd = () => {
-    setParticipants((prevParticipants) => {
-      console.log(prevParticipants);
-      const newParticipants = [
-        ...prevParticipants,
-        `placeholder${prevParticipants.length}`,
-      ];
-      console.log(newParticipants);
-      return newParticipants;
-    });
-  };
-
-  const handleRemove = () => {
-    setParticipants((prevParticipants) => {
-      const newParticipants = [...prevParticipants];
-      newParticipants.shift();
-      return newParticipants;
-    });
-  };
-
   const handleToggleMic = () => {
     setIsMuted(!isMuted);
     if (client) {
@@ -143,6 +138,13 @@ const Arbiter = () => {
     setIsCamHidden(!isCamHidden);
     if (client) {
       client.toggleCam();
+    }
+  };
+
+  const handleSendChatMessage = (message) => {
+    console.log('In artbier, sending message:', message);
+    if (client) {
+      client.sendChatMessage(message);
     }
   };
 
@@ -177,14 +179,10 @@ const Arbiter = () => {
               <button onClick={client.createWebSocket.bind(client)}>
                 Connect
               </button>
-              <button onClick={client.sendMessage.bind(client)}>
-                Send Message
-              </button>
             </>
           ) : (
             <button onClick={handleClaimRoom}>Create Room</button>
           )}
-
           <img className="logo" src="./src/assets/Arbiter_whitebg.png"></img>
           {client.producer.mediaStream && (
             <VideoGrid
@@ -192,6 +190,8 @@ const Arbiter = () => {
               clientConnection={client.getProducer()}
               isMuted={isMuted}
               isCamHidden={isCamHidden}
+              chatLog={chatLog}
+              onSendChatMessage={handleSendChatMessage}
             />
           )}
         </>

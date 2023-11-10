@@ -21,14 +21,17 @@ type HandshakeData = {
 
 class Client {
   id: string;
-  roomId: string
+  roomId: string;
   socket: typeof socket;
   producer: Producer;
   consumers: Map<string, Consumer>;
 
   onUpdateConsumers: (consumers: Map<string, Consumer>) => void;
 
-  constructor(onUpdateConsumers: (consumers: Map<string, Consumer>) => void) {
+  constructor(
+    onUpdateConsumers: (consumers: Map<string, Consumer>) => void,
+    onNewChatMessage: (messages: Array<Object>) => void,
+  ) {
     this.id = uuidv4();
     console.log(`%cI AM CLIENT ${this.id}`, 'color: green');
     this.socket = null;
@@ -36,10 +39,12 @@ class Client {
       this.socket,
       this.id,
       RTC_CONFIG,
-      this.updateFeatures.bind(this)
+      this.updateFeatures.bind(this),
+      onNewChatMessage.bind(this),
     );
     this.consumers = new Map();
     this.onUpdateConsumers = onUpdateConsumers;
+    this.roomId = '';
   }
 
   createWebSocket() {
@@ -90,7 +95,8 @@ class Client {
   }
 
   updateRoomId(roomId: string) {
-    console.log("Gonna update roomID on Producer", roomId)
+    console.log('Gonna update roomID on Producer', roomId);
+    this.roomId = roomId;
     this.producer.updateRoomId(roomId);
   }
 
@@ -105,11 +111,9 @@ class Client {
     this.socket.close();
   }
 
-  // dev only
-  sendMessage() {
-    this.producer.sendMessage();
+  sendChatMessage(message) {
+    this.producer.sendChatMessage(message);
   }
-
 
   createNewConsumer(clientId: string, remotePeerId: string) {
     console.log('%c!!!!!!!!CREATING NEW CONSUMER!!!!!!!!!!!!', 'color:red');
@@ -117,7 +121,8 @@ class Client {
       clientId,
       remotePeerId,
       this.socket,
-      RTC_CONFIG
+      RTC_CONFIG,
+      this.roomId,
     );
     this.consumers.set(remotePeerId, consumer);
     return consumer;

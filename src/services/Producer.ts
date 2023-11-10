@@ -51,11 +51,14 @@ class Producer {
 
   updateFeatures: (consumers: Map<string, Consumer>) => void;
 
+  onNewChatMessage: (messages: Array<Object>) => void;
+
   constructor(
     socket: Socket,
     id: string,
     RTC_CONFIG: RTCConfiguration,
-    updateFeatures: (consumers: Map<string, Consumer>) => void
+    updateFeatures: (consumers: Map<string, Consumer>) => void,
+    onNewChatMessage: (messages: Array<Object>) => void
   ) {
     this.id = id;
     this.connection = new RTCPeerConnection(RTC_CONFIG);
@@ -72,6 +75,7 @@ class Producer {
     };
     this.featuresChannel = null;
     this.updateFeatures = updateFeatures;
+    this.onNewChatMessage = onNewChatMessage;
     this.connected = false;
     this.roomId = '';
 
@@ -147,8 +151,7 @@ class Producer {
         type: 'client',
       },
     };
-    console.log("Identify payload:", payload)
-
+    console.log('Identify payload:', payload);
     this.socket.send(JSON.stringify(payload));
 
     this.establishCallFeatures.call(this);
@@ -156,7 +159,7 @@ class Producer {
   }
 
   updateRoomId(roomId: string) {
-    console.log("Producer updating roomId")
+    console.log('Producer updating roomId');
     this.roomId = roomId;
   }
 
@@ -244,6 +247,7 @@ class Producer {
           type: 'producer',
           sender: this.id,
           candidate: candidate,
+          roomId: this.roomId,
         },
       };
 
@@ -269,6 +273,7 @@ class Producer {
         type: 'producer',
         sender: this.id,
         description: this.connection.localDescription,
+        roomId: this.roomId,
       },
     };
 
@@ -285,13 +290,26 @@ class Producer {
       negotiated: true,
       id: 100,
     });
-    // const callback = (event) => console.log('got a message', event.data);
-    this.connection.chatChannel.onmessage = this.handleChatMessage.bind(this);
+    const callback = (event) => console.log('got a message', event.data);
+    this.connection.chatChannel.onmessage = this.handlePeerChatMessage.bind(this);
   }
 
-  handleChatMessage(event) {
+  sendChatMessage(message) {
+    const payload = {
+      id: this.id,
+      sender: 'self',
+      content: message,
+    };
+    this.onNewChatMessage(payload);
+    if (this.connection.chatChannel.readyState === 'open') {
+      this.connection.chatChannel.send(JSON.stringify(payload));
+    }
+  }
+
+  handlePeerChatMessage(event) {
     const data = JSON.parse(event.data);
-    console.log('Got a chat message:', data);
+    data.sender = 'peer';
+    this.onNewChatMessage(data);
   }
 
   addCallFeatures() {
@@ -316,18 +334,6 @@ class Producer {
       const { id, features } = JSON.parse(data);
       this.updateFeatures(id, features);
     };
-  }
-
-  // for dev only; remove later
-  sendMessage() {
-    console.log(this.connection.chatChannel.readyState);
-    if (this.connection.chatChannel.readyState === 'open') {
-      const payload = {
-        sender: this.id,
-        message: 'hello',
-      };
-      this.connection.chatChannel.send(JSON.stringify(payload));
-    }
   }
 
   toggleMic() {
