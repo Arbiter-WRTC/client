@@ -1,25 +1,24 @@
 import styled from 'styled-components';
 
 const Video = styled.video`
-  max-width: 100%;
-  max-height: 100%;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%; /* Adjust as needed */
+  height: auto; /* Adjust for maintaining aspect ratio */
   object-fit: cover;
-  margin: 0; /* Remove any margin */
-  padding: 0; /* Remove any padding */
-  display: block; /* Ensure block display to avoid inline spacing */
+  transform: translate(-50%, -20%); /* Centering the content */
 `;
 
 const Poster = styled.img`
-  max-width: 100%;
-  max-height: 100%;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%; /* Adjust as needed */
+  height: auto; /* Adjust for maintaining aspect ratio */
   object-fit: cover;
-  margin: 0; /* Remove any margin */
-  padding: 0; /* Remove any padding */
-  display: block; /* Ensure block display to avoid inline spacing */
+  background-color: #eee;
+  transform: translate(-50%, -20%); /* Centering the content */
 `;
 
 const VideoWrapper = styled.div`

@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from 'react';
-// import Video from './Video';
 import {
   Video,
   VideoWrapper,
@@ -34,7 +33,7 @@ const PeerVideo = (props: PeerVideoProps) => {
       <VideoWrapper>
         <MuteImage
           className={audioEnabled ? 'hidden' : ''}
-          src="./src/assets/muted.png"
+          src="./src/assets/ui_muted.png"
           alt="Mute"
         />
         {videoEnabled ? (
@@ -46,7 +45,7 @@ const PeerVideo = (props: PeerVideoProps) => {
             playsInline
           ></Video>
         ) : (
-          <Poster src="./src/assets/poster.svg"></Poster>
+          <Poster src="./src/assets/ArbiterSymbol.png"></Poster>
         )}
       </VideoWrapper>
     </>

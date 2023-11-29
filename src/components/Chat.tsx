@@ -1,13 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSpring, animated } from 'react-spring';
 import styled from 'styled-components';
 
 const StyledChat = styled(animated.aside)`
   width: ${(props) =>
     props['data-visible'] ? '400px' : '0'}; /* Adjust the width */
-  max-width: 80vw; /* Adjust the max-width */
-  min-height: 50vh;
-  max-height: 50vh;
+  border: ${(props) =>
+    props['data-visible'] ? '2px solid #888' : 'none'}; /* Adjust the width */
+  max-width: 80vw;
+  height: 60vh;
   background-color: white;
   position: relative;
   display: flex;
@@ -15,13 +16,12 @@ const StyledChat = styled(animated.aside)`
   top: 0;
   right: 0;
   overflow-x: hidden;
+  margin-left: 30px;
+  border-radius: 10px;
+  padding-bottom: 5px;
 `;
 
-const ChatMessage = styled.li`
-  min-width: 0%
-  width: 100%;
-  white-space: nowrap;
-`;
+const ChatMessage = styled.li``;
 
 const Chat = ({ chatLog, isChatShown, onSendChatMessage }) => {
   const chatLogRef = useRef(null);
@@ -69,7 +69,7 @@ const Chat = ({ chatLog, isChatShown, onSendChatMessage }) => {
             onChange={handleInputChange}
           />
           <button type="submit" id="chat-btn">
-            Send
+            <img src="./src/assets/send.png"></img>
           </button>
         </form>
       </StyledChat>

@@ -1,10 +1,3 @@
-/*
-Refactor Todos;
-
-remove client.producer references
-Client needs a Type?
-*/
-
 import { useEffect, useState } from 'react';
 import Client from '../services/Client';
 import VideoGrid from './VideoGrid';
@@ -77,7 +70,7 @@ const Arbiter = () => {
 
   useEffect(() => {
     (async () => {
-      const urlPath = 'testTy1';
+      const urlPath = 'testTy3';
       if (!path) {
         await setPath(urlPath);
       }
@@ -128,6 +121,7 @@ const Arbiter = () => {
   };
 
   const handleToggleMic = () => {
+    console.log('toggling mic');
     setIsMuted(!isMuted);
     if (client) {
       client.toggleMic();
@@ -148,51 +142,41 @@ const Arbiter = () => {
     }
   };
 
+  const handleConnect = () => {
+    if (client) {
+      client.createWebSocket.call(client);
+    }
+  };
+
+  const handleDisconnect = () => {
+    // TODO: Handle Disconnect
+    console.log('Do some disconnect stuff');
+  };
+
   return (
     <>
-      <div id="media-toggles">
-        <button
-          aria-label="Toggle microphone"
-          role="switch"
-          aria-checked="true"
-          type="button"
-          id="toggle-mic"
-          onClick={handleToggleMic}
-        >
-          Mic
-        </button>
-        <button
-          aria-label="Toggle camera"
-          role="switch"
-          aria-checked="true"
-          type="button"
-          id="toggle-cam"
-          onClick={handleToggleCam}
-        >
-          Cam
-        </button>
-      </div>
+      <img className="logo" src="./src/assets/Arbiter_whitebg.png"></img>
       {client && (
         <>
           {roomId ? (
             <>
-              <button onClick={client.createWebSocket.bind(client)}>
-                Connect
-              </button>
+              {client.producer.mediaStream && (
+                <VideoGrid
+                  consumers={consumers}
+                  clientConnection={client.getProducer()}
+                  isMuted={isMuted}
+                  isCamHidden={isCamHidden}
+                  chatLog={chatLog}
+                  onSendChatMessage={handleSendChatMessage}
+                  onToggleMic={handleToggleMic}
+                  onToggleCam={handleToggleCam}
+                  onConnect={handleConnect}
+                  onDisconnect={handleDisconnect}
+                />
+              )}
             </>
           ) : (
             <button onClick={handleClaimRoom}>Create Room</button>
-          )}
-          <img className="logo" src="./src/assets/Arbiter_whitebg.png"></img>
-          {client.producer.mediaStream && (
-            <VideoGrid
-              consumers={consumers}
-              clientConnection={client.getProducer()}
-              isMuted={isMuted}
-              isCamHidden={isCamHidden}
-              chatLog={chatLog}
-              onSendChatMessage={handleSendChatMessage}
-            />
           )}
         </>
       )}

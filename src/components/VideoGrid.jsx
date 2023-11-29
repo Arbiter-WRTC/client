@@ -17,15 +17,25 @@ const UIWrapper = styled.div`
   align-items: center;
 `;
 
+const UITogglesWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -20px;
+`;
+
 const RTCComponentsWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
-  border: 1px solid blue;
+  padding: 30px 10px 30px 10px;
   max-height: 100vh;
   position: relative; /* Change this to relative */
   width: 70%;
+  border: 2px solid #888;
+  border-radius: 10px;
+  background-color: #1a1a1a;
 `;
 
 const VideoGrid = ({
@@ -35,6 +45,10 @@ const VideoGrid = ({
   isCamHidden,
   chatLog,
   onSendChatMessage,
+  onToggleMic,
+  onToggleCam,
+  onConnect,
+  onDisconnect,
 }) => {
   const [isChatShown, setIsChatShown] = useState(false);
   const consumerCount = consumers.size;
@@ -98,7 +112,15 @@ const VideoGrid = ({
               </VideoGridItem>
             ))}
           </VideoGridContainer>
-          <UI onToggleChat={handleToggleChat} />
+          <UITogglesWrapper>
+            <UI
+              onToggleChat={handleToggleChat}
+              onToggleMic={onToggleMic}
+              onToggleCam={onToggleCam}
+              onConnect={onConnect}
+              onDisconnect={onDisconnect}
+            />
+          </UITogglesWrapper>
         </VideoGridWrapper>
         <Chat
           chatLog={chatLog}

@@ -16,18 +16,26 @@ const UIWrapper = styled.div`
   backdrop-filter: blur(2px);
 `;
 
-const UI = ({ onToggleChat }) => {
-  const [isMuted, setIsMuted] = useState(false);
+const UI = ({
+  onToggleChat,
+  onToggleMic,
+  onToggleCam,
+  onConnect,
+  onDisconnect,
+}) => {
+  const [isMuted, setIsMuted] = useState(true);
   const [isHidden, setIsHidden] = useState(false);
   const [isChatShown, setIsChatShown] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
 
   const toggleMuted = () => {
     setIsMuted(!isMuted);
+    onToggleMic();
   };
 
   const toggleHidden = () => {
     setIsHidden(!isHidden);
+    onToggleCam();
   };
 
   const toggleIsChatShown = () => {
@@ -36,8 +44,12 @@ const UI = ({ onToggleChat }) => {
   };
 
   const toggleIsConnected = () => {
-    console.log('Setting connected to:', !isConnected);
     setIsConnected(!isConnected);
+    if (isConnected) {
+      onDisconnect();
+    } else {
+      onConnect();
+    }
   };
 
   return (
