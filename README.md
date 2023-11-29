@@ -1,27 +1,40 @@
-# React + TypeScript + Vite
+![arbiter_banner](https://github.com/Arbiter-WRTC/client/assets/57457673/55b44136-8c74-4e0d-b970-b53eabdb020a)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
 
-Currently, two official plugins are available:
+Arbiter's React SDK is built using React with Vite and Typescript.
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="40" height="40"/>
+<img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" alt="typescript" width="40" height="40"/>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+To use Arbiter's SDK, the Arbiter infrastructure must first be provisioned using the CLI tool. You can visit the arbiter-cli repository to complete this step if necessary. Once deployed, Arbiter's CLI tool will provide you with a `.env.local` file to use with Arbiter's SDK.
 
-## Expanding the ESLint configuration
+To integrate, first download the Arbiter npm package with
+`npm install @Arbiter/SDK`
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+Then, import into your existing React application like the following example:
+```ts
+import Arbiter 'from @Arbiter/SDK';
 
-- Configure the top-level `parserOptions` property like this:
+const App = () => {
+   # your code here...
+   <Arbiter />;
+};
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
+export default App
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+INSERT PICTURE OF FRONTEND
+
+Arbiter should work seamlessly with your existing frontend application, and room provisioning will be based on the URL path of the page in question. This allows you to integrate rooms dynamically based on the content. It is important to note that all users who visit that page will be able to join the call for that route, so adding authentication to prevent unauthorized use is a best practice when using Arbiter.
+
+## The Team
+
+**<a href="https://github.com/watzmonium" target="_blank">Stephen Watzman</a>** _Software Engineer_ • Detroit, MI
+
+**<a href="https://github.com/frye-t" target="_blank">Tyler Frye</a>** _Software Engineer_ • Tampa Bay, FL
+
+**<a href="https://github.com/jayjayabose" target="_blank">Jay Jayabose</a>** _Software Engineer_ • New York, NY
+
+
+
+With Arbiter integrated in
