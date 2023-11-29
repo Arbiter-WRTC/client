@@ -34,7 +34,3 @@ Arbiter should work seamlessly with your existing frontend application, and room
 **<a href="https://github.com/frye-t" target="_blank">Tyler Frye</a>** _Software Engineer_ • Tampa Bay, FL
 
 **<a href="https://github.com/jayjayabose" target="_blank">Jay Jayabose</a>** _Software Engineer_ • New York, NY
-
-
-
-With Arbiter integrated in
