@@ -32,7 +32,7 @@ const SelfVideo = (props: SelfVideoProps) => {
     <VideoWrapper>
       <MuteImage
         className={isMuted ? '' : 'hidden'}
-        src="./src/assets/muted.png"
+        src="./src/assets/ui_muted.png"
         alt="Mute"
       />
       {!isCamHidden ? (
@@ -45,7 +45,7 @@ const SelfVideo = (props: SelfVideoProps) => {
           muted
         ></Video>
       ) : (
-        <Poster src="./src/assets/poster.svg"></Poster>
+        <Poster src="./src/assets/ArbiterSymbol.png"></Poster>
       )}
     </VideoWrapper>
   );

@@ -3,10 +3,9 @@ import styled from 'styled-components';
 const VideoGridWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: start:
   align-items: center;
-  height: 100vh;
-  border: 1px solid green;
+  height: 100%;
 `;
 
 const VideoGridContainer = styled.div`
@@ -14,23 +13,20 @@ const VideoGridContainer = styled.div`
   grid-gap: 10px;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   grid-auto-rows: 1fr;
-  max-width: 90vh;
+  width: 90vh;
   max-height: 90vh;
-  border: 1px solid red;
   overflow: hidden;
 `;
 
 const VideoGridItem = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  background: #ccc;
-  border: 2px solid blue;
-  border-radius: 10px;
-  max-width: 100%;
-  max-height: 100%;
+  position: relative;
+  width: 100%;
+  height: 0px;
+  padding-bottom: 56.25%;
   overflow: hidden;
+  background: #ccc;
+  border: 2px solid #ccc;
+  border-radius: 10px;
 `;
 
 export { VideoGridWrapper, VideoGridContainer, VideoGridItem };
