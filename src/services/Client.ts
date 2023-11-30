@@ -19,6 +19,10 @@ type HandshakeData = {
   candidate: RTCIceCandidate;
 };
 
+type ClientDisconnectData = {
+  clientId: string;
+};
+
 class Client {
   id: string;
   roomId: string;
@@ -30,7 +34,7 @@ class Client {
 
   constructor(
     onUpdateConsumers: (consumers: Map<string, Consumer>) => void,
-    onNewChatMessage: (messages: Array<Object>) => void,
+    onNewChatMessage: (messages: Array<Object>) => void
   ) {
     this.id = uuidv4();
     console.log(`%cI AM CLIENT ${this.id}`, 'color: green');
@@ -40,7 +44,7 @@ class Client {
       this.id,
       RTC_CONFIG,
       this.updateFeatures.bind(this),
-      onNewChatMessage.bind(this),
+      onNewChatMessage.bind(this)
     );
     this.consumers = new Map();
     this.onUpdateConsumers = onUpdateConsumers;
@@ -67,6 +71,9 @@ class Client {
         break;
       case 'consumer':
         this.handleConsumerHandshake(data);
+        break;
+      case 'clientDisconnect':
+        this.handleClientDisconnect(data);
         break;
       default:
         console.log('invalid handshake type');
@@ -122,7 +129,7 @@ class Client {
       remotePeerId,
       this.socket,
       RTC_CONFIG,
-      this.roomId,
+      this.roomId
     );
     this.consumers.set(remotePeerId, consumer);
     return consumer;
@@ -136,6 +143,14 @@ class Client {
     }
 
     consumer.handshake(data);
+    this.onUpdateConsumers(this.consumers);
+  }
+
+  handleClientDisconnect(data: ClientDisconnectData) {
+    const {clientId} = data;
+    console.log('Got a Client Disconnected Message:', data);
+    console.log(this.consumers.get(clientId));
+    this.consumers.delete(clientId);
     this.onUpdateConsumers(this.consumers);
   }
 
