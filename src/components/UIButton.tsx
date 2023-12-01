@@ -9,7 +9,7 @@ interface buttonProps {
   isState: boolean;
   offImage: string;
   onImage: string;
-  'dataCircle'?: string;
+  dataCircle?: string;
   'data-width'?: string;
   'data-bg-color'?: string;
   'data-toggled-bg-color'?: string;
