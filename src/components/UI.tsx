@@ -1,20 +1,12 @@
 import { useState } from 'react';
-import styled from 'styled-components';
-import { ToggleButton, ToggledOffImage, ToggledOnImage } from './ToggleButton';
-
-const UIWrapper = styled.div`
-  position: relative; /* Set the position to relative */
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 6px;
-  align-items: center;
-  padding: 8px;
-  background-color: rgba(154, 154, 154, 0.5);
-  border-radius: 30px;
-  bottom: 2%;
-  backdrop-filter: blur(2px);
-`;
+import UIButtonMute from './UIButtonMute';
+import UIButton from './UIButton';
+import {
+  UIWrapper,
+  ToggleButton,
+  ToggledOffImage,
+  ToggledOnImage,
+} from './StyledUIComponents';
 
 const UI = ({
   onToggleChat,
@@ -54,7 +46,8 @@ const UI = ({
 
   return (
     <UIWrapper>
-      <ToggleButton onClick={toggleMuted} data-circle="true">
+      {/* <UIButtonMute onToggleMuted={toggleMuted} isMuted={isMuted} /> */}
+      {/* <ToggleButton onClick={toggleMuted} data-circle="true">
         <ToggledOffImage
           src="./src/assets/mic.png"
           data-is-toggled={isMuted.toString()}
@@ -63,9 +56,25 @@ const UI = ({
           src="./src/assets/ui_muted.png"
           data-is-toggled={isMuted.toString()}
         />
-      </ToggleButton>
+      </ToggleButton> */}
 
-      <ToggleButton onClick={toggleHidden} data-circle="true">
+      <UIButton
+        onToggleState={toggleMuted}
+        isState={isMuted}
+        offImage="./src/assets/mic.png"
+        onImage="./src/assets/ui_muted.png"
+        dataCircle='true'
+      />
+
+      <UIButton
+        onToggleState={toggleHidden}
+        isState={isHidden}
+        offImage="./src/assets/cam.png"
+        onImage="./src/assets/ui_cam_hidden.png"
+        dataCircle='true'
+      />
+      
+      {/* <ToggleButton onClick={toggleHidden} data-circle="true">
         <ToggledOffImage
           src="./src/assets/cam.png"
           data-is-toggled={isHidden.toString()}
@@ -74,9 +83,17 @@ const UI = ({
           src="./src/assets/ui_cam_hidden.png"
           data-is-toggled={isHidden.toString()}
         />
-      </ToggleButton>
+      </ToggleButton> */}
 
-      <ToggleButton onClick={toggleIsChatShown} data-circle="true">
+      <UIButton
+        onToggleState={toggleIsChatShown}
+        isState={isChatShown}
+        offImage="./src/assets/chat.png"
+        onImage="./src/assets/ui_chat_shown.png"
+        dataCircle='true'
+      />
+
+      {/* <ToggleButton onClick={toggleIsChatShown} data-circle="true">
         <ToggledOffImage
           src="./src/assets/chat.png"
           data-is-toggled={isChatShown.toString()}
@@ -85,7 +102,18 @@ const UI = ({
           src="./src/assets/ui_chat_shown.png"
           data-is-toggled={isChatShown.toString()}
         />
-      </ToggleButton>
+      </ToggleButton> */}
+
+      <UIButton
+        onToggleState={toggleIsConnected}
+        isState={isConnected}
+        offImage="./src/assets/connect.png"
+        onImage="./src/assets/disconnect.png"
+        dataWidth="70px"
+        dataBgColor="#01ce4c"
+        dataToggledBgColor="red"
+        className={isConnected ? 'toggled' : ''}
+      />
 
       <ToggleButton
         onClick={toggleIsConnected}

@@ -1,5 +1,19 @@
 import styled, { keyframes } from 'styled-components';
 
+const UIWrapper = styled.div`
+  position: relative; /* Set the position to relative */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 6px;
+  align-items: center;
+  padding: 8px;
+  background-color: rgba(154, 154, 154, 0.5);
+  border-radius: 30px;
+  bottom: 2%;
+  backdrop-filter: blur(2px);
+`;
+
 const breatheAnimation = keyframes`
   0% { transform: scale(1) }
   30% { transform: scale(1.2) }
@@ -59,4 +73,4 @@ const ToggledOnImage = styled(ToggleImage)`
   }
 `;
 
-export { ToggleButton, ToggleImage, ToggledOffImage, ToggledOnImage };
+export { UIWrapper, ToggleButton, ToggleImage, ToggledOffImage, ToggledOnImage };
