@@ -1,11 +1,38 @@
 import styled from 'styled-components';
 
+const UIWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const UITogglesWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: -20px;
+`;
+
 const VideoGridWrapper = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: start:
   align-items: center;
   height: 100%;
+`;
+
+const RTCComponentsWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 10px 30px 10px;
+  max-height: 100vh;
+  position: relative; /* Change this to relative */
+  width: 70%;
+  border: 2px solid #888;
+  border-radius: 10px;
+  background-color: #1a1a1a;
 `;
 
 const VideoGridContainer = styled.div`
@@ -29,4 +56,11 @@ const VideoGridItem = styled.div`
   border-radius: 10px;
 `;
 
-export { VideoGridWrapper, VideoGridContainer, VideoGridItem };
+export {
+  UIWrapper,
+  UITogglesWrapper,
+  RTCComponentsWrapper,
+  VideoGridWrapper,
+  VideoGridContainer,
+  VideoGridItem,
+};

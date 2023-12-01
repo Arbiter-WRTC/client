@@ -2,41 +2,15 @@ import React, { useState } from 'react';
 import SelfVideo from './SelfVideo';
 import PeerVideo from './PeerVideo';
 import {
+  UIWrapper,
+  UITogglesWrapper,
   VideoGridWrapper,
   VideoGridContainer,
   VideoGridItem,
+  RTCComponentsWrapper,
 } from './StyledGridComponents';
 import UI from './UI';
 import Chat from './Chat';
-
-import styled from 'styled-components';
-
-const UIWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const UITogglesWrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: -20px;
-`;
-
-const RTCComponentsWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 30px 10px 30px 10px;
-  max-height: 100vh;
-  position: relative; /* Change this to relative */
-  width: 70%;
-  border: 2px solid #888;
-  border-radius: 10px;
-  background-color: #1a1a1a;
-`;
 
 const VideoGrid = ({
   consumers,
@@ -52,7 +26,6 @@ const VideoGrid = ({
 }) => {
   const [isChatShown, setIsChatShown] = useState(false);
   const consumerCount = consumers.size;
-  // const consumerCount = consumers.length;
   let columns = 1;
   let rows = 1;
 
@@ -79,7 +52,6 @@ const VideoGrid = ({
 
   const handleToggleChat = (value) => {
     setIsChatShown(value);
-    console.log('toggling chat');
   };
 
   return (
