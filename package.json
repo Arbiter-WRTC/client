@@ -1,8 +1,17 @@
 {
-  "name": "arbiter-client",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@arbiter/sdk",
+  "private": false,
+  "version": "1.0.0",
   "type": "module",
+  "files": ["dist"],
+  "main": "./dist/arbiter-client.umd.cjs",
+  "module": "./dist/arbiter-client.js",
+  "exports": {
+    ".": {
+      "import": "./dist/arbiter-client.js",
+      "require": "./dist/arbiter-client.umd.cjs"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
