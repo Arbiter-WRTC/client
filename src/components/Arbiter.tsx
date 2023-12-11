@@ -3,6 +3,7 @@ import Client from '../services/Client';
 import VideoGrid from './VideoGrid';
 import axios from 'axios';
 import { API_STACK_URL } from '../constants';
+import bgWhite from './src/assets/Arbiter_whitebg.png';
 
 const Arbiter = () => {
   const [client, setClient] = useState(null);
@@ -70,7 +71,7 @@ const Arbiter = () => {
 
   useEffect(() => {
     (async () => {
-      const urlPath = 'testTy3';
+      const urlPath = window.location.pathname;
       if (!path) {
         await setPath(urlPath);
       }
@@ -148,14 +149,9 @@ const Arbiter = () => {
     }
   };
 
-  const handleDisconnect = () => {
-    // TODO: Handle Disconnect
-    console.log('Do some disconnect stuff');
-  };
-
   return (
     <>
-      <img className="logo" src="./src/assets/Arbiter_whitebg.png"></img>
+      <img className='logo' src={bgWhite}></img>
       {client && (
         <>
           {roomId ? (

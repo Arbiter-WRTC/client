@@ -1,4 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
+import muted from './src/assets/ui_muted.png';
+import arbiterSymbol from './src/assets/ArbiterSymbol.png';
 import {
   Video,
   VideoWrapper,
@@ -33,19 +35,19 @@ const PeerVideo = (props: PeerVideoProps) => {
       <VideoWrapper>
         <MuteImage
           className={audioEnabled ? 'hidden' : ''}
-          src="./src/assets/ui_muted.png"
-          alt="Mute"
+          src={muted}
+          alt='Mute'
         />
         {videoEnabled ? (
           <Video
             ref={videoRef}
             id={id}
-            className="video"
+            className='video'
             autoPlay
             playsInline
           ></Video>
         ) : (
-          <Poster src="./src/assets/ArbiterSymbol.png"></Poster>
+          <Poster src={arbiterSymbol}></Poster>
         )}
       </VideoWrapper>
     </>

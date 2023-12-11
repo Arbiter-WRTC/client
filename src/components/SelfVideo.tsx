@@ -1,4 +1,7 @@
 import { useRef, useEffect, useState } from 'react';
+import mutedImg from "./src/assets/ui_muted.png";
+import arbiterSymbol from "./src/assets/ArbiterSymbol.png";
+
 import {
   Video,
   VideoWrapper,
@@ -32,7 +35,7 @@ const SelfVideo = (props: SelfVideoProps) => {
     <VideoWrapper>
       <MuteImage
         className={isMuted ? '' : 'hidden'}
-        src="./src/assets/ui_muted.png"
+        src={mutedImg}
         alt="Mute"
       />
       {!isCamHidden ? (
@@ -45,7 +48,7 @@ const SelfVideo = (props: SelfVideoProps) => {
           muted
         ></Video>
       ) : (
-        <Poster src="./src/assets/ArbiterSymbol.png"></Poster>
+        <Poster src={arbiterSymbol}></Poster>
       )}
     </VideoWrapper>
   );
