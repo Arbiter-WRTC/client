@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import styled from 'styled-components';
 import { ToggleButton, ToggledOffImage, ToggledOnImage } from './ToggleButton';
-import mic from './assets/mic.png';
-import muted from './assets/ui_muted.png';
-import cam from './assets/cam.png';
-import camHidden from './assets/ui_cam_hidden.png';
-import chat from './assets/chat.png';
-import chatShow from './assets/ui_chat_shown.png';
-import connect from './assets/connect.png';
-import disconnect from './assets/disconnect.png';
+import mic from '../assets/mic.png';
+import muted from '../assets/ui_muted.png';
+import cam from '../assets/cam.png';
+import camHidden from '../assets/ui_cam_hidden.png';
+import chat from '../assets/chat.png';
+import chatShow from '../assets/ui_chat_shown.png';
+import connect from '../assets/connect.png';
+import disconnect from '../assets/disconnect.png';
 
 const UIWrapper = styled.div`
   position: relative; /* Set the position to relative */

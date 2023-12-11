@@ -3,7 +3,7 @@ import Client from '../services/Client';
 import VideoGrid from './VideoGrid';
 import axios from 'axios';
 import { API_STACK_URL } from '../constants';
-import bgWhite from './assets/Arbiter_whitebg.png';
+import bgWhite from '../assets/Arbiter_whitebg.png';
 
 const Arbiter = () => {
   const [client, setClient] = useState(null);
