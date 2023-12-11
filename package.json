@@ -1,5 +1,5 @@
 {
-  "name": "@arbiter-framework/arbiter-sdk",
+  "name": "@arbiter-framework/sdk",
   "type": "module",
   "scripts": {
     "dev": "vite",
