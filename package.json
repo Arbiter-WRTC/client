@@ -1,6 +1,5 @@
 {
-  "name": "arbiter-client",
-  "private": true,
+  "name": "@arbiter-framework/sdk",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
@@ -35,5 +34,17 @@
     "eslint-plugin-react-refresh": "^0.4.3",
     "typescript": "^5.0.2",
     "vite": "^4.4.5"
-  }
+  },
+  "description": "![arbiter_banner](https://github.com/Arbiter-WRTC/client/assets/57457673/55b44136-8c74-4e0d-b970-b53eabdb020a)",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Arbiter-WRTC/client.git"
+  },
+  "author": "arbiter",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Arbiter-WRTC/client/issues"
+  },
+  "homepage": "https://github.com/Arbiter-WRTC/client#readme"
 }
