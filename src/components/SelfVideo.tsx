@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
-import mutedImg from './assets/ui_muted.png';
-import arbiterSymbol from './assets/ArbiterSymbol.png';
+import mutedImg from '../assets/ui_muted.png';
+import arbiterSymbol from '../assets/ArbiterSymbol.png';
 
 import {
   Video,
