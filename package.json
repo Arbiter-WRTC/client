@@ -1,6 +1,7 @@
 {
   "name": "@arbiter-framework/sdk",
   "type": "module",
+  "main": "dist/index.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -35,7 +36,6 @@
     "vite": "^4.4.5"
   },
   "description": "![arbiter_banner](https://github.com/Arbiter-WRTC/client/assets/57457673/55b44136-8c74-4e0d-b970-b53eabdb020a)",
-  "main": "index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Arbiter-WRTC/client.git"
