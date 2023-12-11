@@ -45,5 +45,6 @@
   "bugs": {
     "url": "https://github.com/Arbiter-WRTC/client/issues"
   },
-  "homepage": "https://github.com/Arbiter-WRTC/client#readme"
+  "homepage": "https://github.com/Arbiter-WRTC/client#readme",
+  "version": "0.1.0"
 }
