@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
-import muted from './src/assets/ui_muted.png';
-import arbiterSymbol from './src/assets/ArbiterSymbol.png';
+import muted from './assets/ui_muted.png';
+import arbiterSymbol from './assets/ArbiterSymbol.png';
 import {
   Video,
   VideoWrapper,

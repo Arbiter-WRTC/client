@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
-import mutedImg from "./src/assets/ui_muted.png";
-import arbiterSymbol from "./src/assets/ArbiterSymbol.png";
+import mutedImg from './assets/ui_muted.png';
+import arbiterSymbol from './assets/ArbiterSymbol.png';
 
 import {
   Video,
@@ -36,13 +36,13 @@ const SelfVideo = (props: SelfVideoProps) => {
       <MuteImage
         className={isMuted ? '' : 'hidden'}
         src={mutedImg}
-        alt="Mute"
+        alt='Mute'
       />
       {!isCamHidden ? (
         <Video
           ref={videoRef}
           id={id}
-          className="video"
+          className='video'
           autoPlay
           playsInline
           muted
