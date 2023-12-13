@@ -11,7 +11,7 @@ To integrate, first download the Arbiter npm package with
 
 Then, import into your existing React application like the following example:
 ```ts
-import Arbiter 'from @Arbiter/SDK';
+import Arbiter 'from @arbiter-framework/sdk';
 
 const App = () => {
    # your code here...
